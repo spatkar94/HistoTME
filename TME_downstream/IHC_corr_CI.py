@@ -47,9 +47,12 @@ def bootstrap_ihc():
     df_comb = df_comb.merge(df_cd8, how='inner', on='ID')
     df_comb = df_comb.merge(df_bcell, how='inner', on='ID')
     df_comb = df_comb.merge(df_mac, how='inner', on='ID')
+    df_comb['cd4_count'] = df_comb['cd4_count'].fillna(0)
+    df_comb['cd8_count'] = df_comb['cd4_count'].fillna(0)
     df_comb['cd4_cd8'] = df_comb.apply(lambda row: row['cd4_count'] + row['cd8_count'], axis=1)
-    df_comb = df_comb.dropna()
-    nan_rows = df_comb[df_comb['cd4_cd8'].isnull()]
+    df_comb = df_comb[df_comb['ID'].str.contains('UR-PDL1-LR-041|UR-PDL1-LR-048|UR-PDL1-LR-083')==False]
+
+    df_comb_bcell = df_comb.dropna(subset='bcell_count')
     
     r_tcell = []
     r_bcell = []
@@ -61,11 +64,16 @@ def bootstrap_ihc():
         r = cor(df_comb_resample['cd4_cd8'], df_comb_resample['T_cells'])
         r_tcell.append(r[0])
 
-        r = cor(df_comb_resample['bcell_count'], df_comb_resample['B_cells'])
-        r_bcell.append(r[0])
-
         r = cor(df_comb_resample['mac_count'], df_comb_resample['Macrophages'])
         r_mac.append(r[0])
+
+    # B cell separate due to nan values
+    for i in tqdm(range(num_bootstrap)):
+        df_comb_resample = resample(df_comb_bcell, random_state=i)
+
+        assert df_comb_resample['bcell_count'].isna().sum() == 0 
+        r = cor(df_comb_resample['bcell_count'], df_comb_resample['B_cells'])
+        r_bcell.append(r[0])
 
     r_dict = {'T cells':r_tcell, 'B cells':r_bcell, 'Macrophages':r_mac} 
     results = {key: {} for key in r_dict.keys()}
@@ -77,7 +85,7 @@ def bootstrap_ihc():
         print(f'{key} Mean:    Scores = {np.mean(r_dict[key])} ')
         #print(f'{key} Median:    Scores Single Task = {np.median(r_single[key])}    |    Scores Multitask = {np.median(r_multi[key])} ')
 
-        plotRoot = f'IHC_corr_CI/histograms/'
+        plotRoot = f'predictions/histograms/'
         if not os.path.exists(plotRoot):
             os.makedirs(plotRoot)
         plt.hist(r_dict[key])
@@ -92,7 +100,7 @@ def bootstrap_ihc():
     df = df.reset_index().rename(columns={df.index.name:'task'})
     print(df)
     
-    df.to_csv(f'IHC_corr_CI/{cor_type}_r_CI_IHC.csv', index=False)
+    df.to_csv(f'predictions/{cor_type}_r_CI_IHC.csv', index=False)
 
 
 if __name__ == "__main__":
