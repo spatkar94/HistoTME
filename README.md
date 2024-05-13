@@ -1,4 +1,26 @@
-# HistoTME
-Leveraging Digital Pathology Foundation Models to characterize the tumor microenvironment (TME)
+# HistoTME: Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images 
+
+## Overview 
+Implementation of HistoTME in our paper "Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images":
+[Citation]
+
+The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (ABMIL) to predict TME signatures derived from bulk transcriptomics. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
+
+The code in the folder HistoTME_downstream can be used to run downstream prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs. _______ stuff on clustering downstream
+
+## Installation and prerequisites
+Tested with Python 3.8. Tested on both GPU (should I test on CPU?).
+
+## How to use
+
+## Questions and Issues
+If you find any bugs or have any questions about this code please contact Sushant or Alex.
+
+## Citation
+If you found our work useful in your research please consider citing our paper:
+
+## Acknowledgments
+
+
 
 Testing
