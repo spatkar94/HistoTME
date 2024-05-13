@@ -22,6 +22,7 @@ def make_pairwise_cols(df):
         df[f'{col1}__{col2}__mul'] = np.exp(df[col1]) * np.exp(df[col2])
         df[f'{col1}__{col2}__sub'] = df[col1] - df[col2]
         df[f'{col1}__{col2}__div'] = np.exp(df[col1]) / np.exp(df[col2])
+    df = df.drop(columns=ft_cols)
     return df
 
 def main(seed):
@@ -50,7 +51,7 @@ def main(seed):
     X_train_scaled = make_pairwise_cols(X_train_scaled)
     X_test_scaled = make_pairwise_cols(X_test_scaled)
 
-    features = rf_selection(X_train_scaled, y_train.ravel(), n=17) 
+    features = rf_selection(X_train_scaled, y_train.ravel(), n=18) 
     print(len(features), features[:10])
 
     dtrain_clf = xgb.DMatrix(X_train_scaled[features], y_train, enable_categorical=True)
@@ -60,15 +61,14 @@ def main(seed):
 
     n=1000
     params = {"objective": "multi:softprob", "tree_method": "hist", "num_class": 2, "device":"cuda:1",
-                'eta':0.1, 'max_depth':3}
+                'eta':0.1, 'gamma':0.1}
 
     results = xgb.cv(
         params, dtrain_clf,
         num_boost_round=n,
-        nfold=10,
+        nfold=5,
         metrics=["mlogloss", 'auc', "merror"],
         seed=seed,
-        stratified=True,
         early_stopping_rounds=100,
     )
     
@@ -86,10 +86,10 @@ def main(seed):
         num_boost_round=best_trees,
     )
 
+    # Interpretability analysis
     if not os.path.exists('interpretability'):
         os.mkdir('interpretability')
 
-    # Interpretability analysis
     gain_dict = model.get_score(importance_type='gain')
     feat_imp = pd.Series(gain_dict).sort_values(ascending=False)
     feat_imp.plot(kind='barh', title='Feature Importances', color='peru')
@@ -142,11 +142,6 @@ def main(seed):
     g.savefig('interpretability/shap_barplot.png', bbox_inches='tight', dpi=500)
     plt.close()
 
-    max_row = 9
-    dcheck_clf = xgb.DMatrix(X[features].iloc[:max_row], y_encoded[:max_row], enable_categorical=True)
-    y_check_prediction = model.predict(dcheck_clf)
-    print(y_check_prediction)
-
     y_prob = model.predict(dtest_clf)
     y_pred = np.argmax(y_prob, axis=1)
 
@@ -167,5 +162,5 @@ def main(seed):
     out_df.to_csv('test_set_prediction.csv',index=False)
 
 if __name__ == "__main__":
-    main(seed=42)
+    main(seed=2)
 

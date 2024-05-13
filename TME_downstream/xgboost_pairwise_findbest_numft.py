@@ -22,6 +22,7 @@ def make_pairwise_cols(df):
         df[f'{col1}__{col2}__mul'] = np.exp(df[col1]) * np.exp(df[col2])
         df[f'{col1}__{col2}__sub'] = df[col1] - df[col2]
         df[f'{col1}__{col2}__div'] = np.exp(df[col1]) / np.exp(df[col2])
+    df = df.drop(columns=ft_cols)
     return df
 
 def main(seed):
@@ -47,7 +48,7 @@ def main(seed):
     X_test_scaled = make_pairwise_cols(X_test_scaled)
 
     max_ft = len(rf_selection(X_train_scaled, y_train.ravel()))
-    num_ft_choices = np.arange(1,100, 1)
+    num_ft_choices = np.arange(1,50, 1)
     best_num_ft = 0
     best_trees = 0
     best_auc = 0
@@ -60,15 +61,14 @@ def main(seed):
         dtest_clf = xgb.DMatrix(X_test_scaled[features], y_test, enable_categorical=True)
 
         n=1000
-        params = {"objective": "multi:softprob", "tree_method": "hist", "num_class": 2, 'eta':0.1, 'max_depth':3}
+        params = {"objective": "multi:softprob", "tree_method": "hist", "num_class": 2, 'eta':0.1, 'gamma':0.1}
         params["device"] = "cuda:1"
         results = xgb.cv(
             params, dtrain_clf,
             num_boost_round=n,
-            nfold=10,
+            nfold=5,
             metrics=["mlogloss", 'auc', "merror"],
             seed=seed,
-            stratified=True,
             early_stopping_rounds=100,
         )
        
@@ -109,20 +109,7 @@ def main(seed):
         num_boost_round=best_trees,
     )
 
-    y_prob = model.predict(dtest_clf)
-    y_pred = np.argmax(y_prob, axis=1)
-
-    scores = [accuracy_score(y_test, y_pred), roc_auc_score(y_test, y_prob[:,1]), precision_score(y_test, y_pred), 
-                recall_score(y_test, y_pred), f1_score(y_test, y_pred), average_precision_score(y_test, y_pred)]
-
-    print("Test Accuracy:", accuracy_score(y_test, y_pred))
-    print("Test ROC AUC:", roc_auc_score(y_test, y_prob[:,1]))
-    print("Test Precision:", precision_score(y_test, y_pred))
-    print("Test Recall:", recall_score(y_test, y_pred))
-    print("Test F1:", f1_score(y_test, y_pred))
-    print("Test AP:", average_precision_score(y_test, y_pred))
-
 if __name__ == "__main__":
-    main(seed=42)
+    main(seed=2)
 
 

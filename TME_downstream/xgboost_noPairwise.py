@@ -30,7 +30,7 @@ def main(seed):
     test_size = 0.3
     X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, random_state=seed, stratify=y_encoded, test_size=test_size)
 
-    features = rf_selection(X_train, y_train.ravel(), n=10)
+    features = rf_selection(X_train, y_train.ravel(), n=2)
     print(len(features), features)
     X_train = X_train[features]
     X_test = X_test[features]
@@ -39,15 +39,14 @@ def main(seed):
     dtest_clf = xgb.DMatrix(X_test, y_test, enable_categorical=True)
 
     n=1000
-    params = {"objective": "multi:softprob", "tree_method": "hist", "num_class": 2, 'eta':0.1, 'max_depth':3}
+    params = {"objective": "multi:softprob", "tree_method": "hist", "num_class": 2, 'eta':0.1}
     params["device"] = "cuda:3"
     results = xgb.cv(
         params, dtrain_clf,
         num_boost_round=n,
-        nfold=10,
+        nfold=5,
         metrics=["mlogloss", 'auc', "merror"],
         seed=seed,
-        stratified=True,
         early_stopping_rounds=100,
     )
     
@@ -78,4 +77,4 @@ def main(seed):
     print("Test AP:", average_precision_score(y_test, y_pred))
 
 if __name__ == "__main__":
-    main(seed=42)
+    main(seed=2)

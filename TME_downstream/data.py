@@ -3,13 +3,11 @@ from utils import choose_single_vs_multi
 
 
 def load_dataset(name='tme_only'):
-    df_single = pd.read_csv('../TME_regression/predictions/suny_predictions_singletask_UNI.csv')
-    df_multi = pd.read_csv('../TME_regression/predictions/suny_predictions_multitask_UNI.csv')
+    df_multi = pd.read_csv('/home/air/chenah/UNI_TME_regression/predictions/suny_predictions_multitask_UNI.csv')
 
     df = df_multi
-    #df = choose_single_vs_multi(df_single, df_multi)
 
-    clin_path = '/mnt/synology/ICB_Data_SUNY/clinical_metadata/SUNY_FINAL_clinical_data_with_PFS_corrected_040924.tsv'
+    clin_path = '/mnt/synology/ICB_Data_SUNY/clinical_metadata/SUNY_FINAL_clinical_data_with_PFS_corrected_050224.tsv'
     df_clin = pd.read_csv(clin_path, sep='\t')
     df_clin = df_clin.rename(columns={"overall_resp":'response_label', 'case_id':'ID'})
 

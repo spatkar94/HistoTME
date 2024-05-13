@@ -47,15 +47,14 @@ def main(seed):
         dtest_clf = xgb.DMatrix(X_test_new, y_test, enable_categorical=True)
 
         n=1000
-        params = {"objective": "multi:softprob", "tree_method": "hist", "num_class": 2, 'eta':0.1, 'max_depth':3}
+        params = {"objective": "multi:softprob", "tree_method": "hist", "num_class": 2, 'eta':0.1}
         params["device"] = "cuda:3"
         results = xgb.cv(
             params, dtrain_clf,
             num_boost_round=n,
-            nfold=10,
+            nfold=5,
             metrics=["mlogloss", 'auc', "merror"],
             seed=seed,
-            stratified=True,
             early_stopping_rounds=100,
         )
        
@@ -94,21 +93,8 @@ def main(seed):
         num_boost_round=best_trees,
     )
 
-    y_prob = model.predict(dtest_clf)
-    y_pred = np.argmax(y_prob, axis=1)
-
-    scores = [accuracy_score(y_test, y_pred), roc_auc_score(y_test, y_prob[:,1]), precision_score(y_test, y_pred), 
-                recall_score(y_test, y_pred), f1_score(y_test, y_pred), average_precision_score(y_test, y_pred)]
-
-    print("Test Accuracy:", accuracy_score(y_test, y_pred))
-    print("Test ROC AUC:", roc_auc_score(y_test, y_prob[:,1]))
-    print("Test Precision:", precision_score(y_test, y_pred))
-    print("Test Recall:", recall_score(y_test, y_pred))
-    print("Test F1:", f1_score(y_test, y_pred))
-    print("Test AP:", average_precision_score(y_test, y_pred))
-
 if __name__ == "__main__":
-    main(seed=42)
+    main(seed=2)
 
 
 
