@@ -19,15 +19,14 @@ pip install -r requirements.txt
 ## How to use
 ### Data Preparation
 #### TCGA and CPTAC data
-The TCGA and CPTAC data can be found in the following links: [][]. The data should be preprocessed using:
+The TCGA and CPTAC whole slide imaging data can be found in the following links: [][]. To extract features from each tile within the whole slide image, run the following WSI embedding script:
 ```
-@Sushant PREPROCESS SCRIPT
+cd data_preprocessing/
+./run_UNI.sh
 ```
 
-Deconvolution of bulk-transcriptomics into TME signatures can be calculated using:
-```
-@Sushant Deconvolution script
-```
+To calculate expression of TME signatures from bulk transcriptomics data please see the following github repository []
+
 
 #### Format Preparation
 The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
