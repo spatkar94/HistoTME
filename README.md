@@ -13,8 +13,9 @@ The code in the folder HistoTME_downstream can be used to run downstream predict
 
 ## Installation and prerequisites
 Tested with Python 3.8. Tested on both GPU (should I test on CPU?). Install requirements using:
-> pip install -r requirements.txt
-
+```
+pip install -r requirements.txt
+```
 ## How to use
 ### Data Preparation
 The TCGA and CPTAC data can be found in the following links: [][]. The data should be preprocessed using:
