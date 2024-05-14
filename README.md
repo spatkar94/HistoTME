@@ -35,7 +35,7 @@ After downloading the WSI run the following WSI preprocessing script to tesselat
 cd data_preprocessing/
 ./run_UNI.sh
 ```
-The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model generated feature embeddings.
+The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model-generated feature embeddings.
 ```
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
