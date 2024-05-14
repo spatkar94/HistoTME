@@ -19,7 +19,18 @@ pip install -r requirements.txt
 ## How to use
 ### Data Preparation
 #### TCGA and CPTAC data
-The TCGA and CPTAC whole slide imaging data can be found in the following links: [][]. To extract features from each tile within the whole slide image, run the following WSI embedding script:
+The TCGA and CPTAC whole slide imaging data can be found in the following links: [][]. The downloaded whole slide images should be stored in a single directory as shown below:
+```bash
+├── WSI_Directory
+│   ├── slide_1.svs
+│   ├── slide_2.svs
+│   ├── ...
+...
+...
+│   ├── slide_N.svs
+
+```
+Run the following WSI preprocessing script to tesselate each whole slide image into a collection of 512x512 pixel tiles scanned at 20x magnification and extract features using UNI[], a pre-trained foundation model:
 ```
 cd data_preprocessing/
 ./run_UNI.sh
