@@ -1,7 +1,7 @@
 HistoTME
 ==============
 pandoc --number-sections < test.md > out.html
-# Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images 
+# Predicting the tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images 
 
 ## Overview 
 Implementation of HistoTME in our paper "Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images":
