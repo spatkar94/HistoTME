@@ -12,7 +12,7 @@ The code in the folder HistoTME_regression can be used to run attention-based mu
 The code in the folder HistoTME_downstream can be used to run downstream prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs. _______ stuff on clustering downstream
 
 ## Installation and prerequisites
-Tested with Python 3.8. Tested on both GPU (should I test on CPU?). Install requirements using:
+Tested with Python 3.9. Tested on both GPU (should I test on CPU?). Install requirements using:
 ```
 pip install -r requirements.txt
 ```
@@ -21,12 +21,12 @@ pip install -r requirements.txt
 #### TCGA and CPTAC data
 The TCGA and CPTAC data can be found in the following links: [][]. The data should be preprocessed using:
 ```
-PREPROCESS SCRIPT
+@Sushant PREPROCESS SCRIPT
 ```
 
 Deconvolution of bulk-transcriptomics into TME signatures can be calculated using:
 ```
-Deconvolution script
+@Sushant Deconvolution script
 ```
 
 #### Format Preparation
@@ -35,22 +35,24 @@ The extracted features should be in h5py file format to be read. A csv containin
 ### Training
 Training can be run for multi-task ABMIL or single-task ABMIL using:
 ```
-HistoTME_regression/run_multitask.sh
-HistoTME_regression/run_single_tasks.sh
+cd HistoTME_regression/
+./run_multitask.sh
+./run_single_tasks.sh
 ```
 
 ### Prediction
 Predictions can be run on the SUNY cohort using:
 ```
-python HistoTME_regression/predict_SUNY.py --task=multitask
-python HistoTME_regression/predict_SUNY.py --task=singletask
+cd HistoTME_regression/
+python predict_SUNY.py --task=multitask
+python predict_SUNY.py --task=singletask
 ```
 Predictions using multitask or singletask ABMIL can be run on the CPTAC or TCGA cohort using:
 ```
-python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=CPTAC
-python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=CPTAC
-python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=TCGA
-python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=TCGA
+python predict_CPTAC_TCGA.py --task=multitask --cohort=CPTAC
+python predict_CPTAC_TCGA.py --task=singletask --cohort=CPTAC
+python predict_CPTAC_TCGA.py --task=multitask --cohort=TCGA
+python predict_CPTAC_TCGA.py --task=singletask --cohort=TCGA
 ```
 
 ### Attention Interpretability
@@ -60,7 +62,7 @@ python HistoTME_regression/get_heatmaps.py
 ```
 These can then be visualized using:
 ```
-script for attention visualization
+@Sushant script for attention visualization
 ```
 
 ## Questions and Issues
