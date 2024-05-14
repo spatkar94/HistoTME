@@ -30,7 +30,7 @@ Deconvolution script
 ```
 
 #### Format Preparation
-The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_TCGA_CPTAC.csv for an example. 
+The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
 
 ### Training
 Training can be run for multi-task ABMIL or single-task ABMIL using:
