@@ -40,14 +40,17 @@ HistoTME_regression/run_single_tasks.sh
 ```
 
 ### Prediction
-Prediction can be run on the SUNY cohort using:
+Predictions can be run on the SUNY cohort using:
 ```
-python HistoTME_regression/predict_SUNY.py
+python HistoTME_regression/predict_SUNY.py --task=multitask
+python HistoTME_regression/predict_SUNY.py --task=singletask
 ```
 Predictions using multitask or singletask ABMIL can be run on the CPTAC or TCGA cohort using:
 ```
-python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=CPTAC; python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=CPTAC
-python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=TCGA; python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=TCGA
+python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=CPTAC
+python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=CPTAC
+python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=TCGA
+python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=TCGA
 ```
 
 ## Questions and Issues
