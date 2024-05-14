@@ -37,7 +37,7 @@ cd data_preprocessing/
 ```
 The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model generated feature embeddings.
 ```
-{['coords']['features']}
+dict{'coords': (x,y), 'features': <embeddings>}
 ```
 
 To calculate expression of TME signatures from bulk transcriptomics data please see the following github repository []
