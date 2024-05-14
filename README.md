@@ -35,8 +35,9 @@ The extracted features should be in h5py file format to be read. A csv containin
 ### Training
 Training can be run for multi-task ABMIL or single-task ABMIL using:
 ```
-HistoTME_regression/run_multitask.sh
-HistoTME_regression/run_single_tasks.sh
+cd HistoTME_regression/
+./run_multitask.sh
+./run_single_tasks.sh
 ```
 
 ### Prediction
