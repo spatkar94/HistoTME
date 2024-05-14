@@ -30,14 +30,17 @@ The TCGA and CPTAC whole slide imaging data can be found in the following links:
 │   ├── slide_N.svs
 
 ```
-Run the following WSI preprocessing script to tesselate each whole slide image into a collection of 512x512 pixel tiles scanned at 20x magnification and extract features using UNI[], a pre-trained foundation model:
+After downloading the WSI run the following WSI preprocessing script to tesselate each whole slide image into a collection of non-overlapping 512x512 pixel tiles scanned at 20x magnification and extract features using UNI[], a pre-trained foundation model:
 ```
 cd data_preprocessing/
 ./run_UNI.sh
 ```
+The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model generated feature embeddings.
+```
+{['coords']['features']}
+```
 
 To calculate expression of TME signatures from bulk transcriptomics data please see the following github repository []
-
 
 #### Format Preparation
 The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
