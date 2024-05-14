@@ -1,4 +1,7 @@
-# HistoTME: Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images 
+HistoTME
+==============
+
+# Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images 
 
 ## Overview 
 Implementation of HistoTME in our paper "Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images":
@@ -9,9 +12,23 @@ The code in the folder HistoTME_regression can be used to run attention-based mu
 The code in the folder HistoTME_downstream can be used to run downstream prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs. _______ stuff on clustering downstream
 
 ## Installation and prerequisites
-Tested with Python 3.8. Tested on both GPU (should I test on CPU?).
+Tested with Python 3.8. Tested on both GPU (should I test on CPU?). Install requirements using:
+> pip install -r requirements.txt
 
 ## How to use
+### Data Preparation
+The TCGA and CPTAC data can be found in the following links: [][]. The data should be preprocessed using:
+> PREPROCESS SCRIPT
+
+Deconvolution of bulk-transcriptomics into TME signatures can be calculated using:
+> Deconvolution script
+
+### Format Preparation
+The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
+
+### Training
+
+### Evaluation
 
 ## Questions and Issues
 If you find any bugs or have any questions about this code please contact Sushant or Alex.
