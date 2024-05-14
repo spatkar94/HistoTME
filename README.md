@@ -21,12 +21,12 @@ pip install -r requirements.txt
 #### TCGA and CPTAC data
 The TCGA and CPTAC data can be found in the following links: [][]. The data should be preprocessed using:
 ```
-PREPROCESS SCRIPT
+@Sushant PREPROCESS SCRIPT
 ```
 
 Deconvolution of bulk-transcriptomics into TME signatures can be calculated using:
 ```
-Deconvolution script
+@Sushant Deconvolution script
 ```
 
 #### Format Preparation
@@ -60,7 +60,7 @@ python HistoTME_regression/get_heatmaps.py
 ```
 These can then be visualized using:
 ```
-script for attention visualization
+@Sushant script for attention visualization
 ```
 
 ## Questions and Issues
