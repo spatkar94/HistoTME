@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ## How to use
 ### Data Preparation
 #### TCGA and CPTAC data
-The TCGA and CPTAC whole slide imaging data can be found in the following links: [][]. The downloaded whole slide images should be stored in a single directory as shown below:
+The TCGA and CPTAC whole slide imaging data can be found online from [GDC](https://portal.gdc.cancer.gov/), [TCIA](https://wiki.cancerimagingarchive.net/display/Public/CPTAC+Imaging+Proteomics) data portals. The downloaded whole slide images should be stored in a single directory as shown below:
 ```bash
 ├── WSI_Directory
 │   ├── slide_1.svs
@@ -40,7 +40,7 @@ The extracted features will be saved in a h5py file with each entry correspondin
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
 
-To calculate expression of TME signatures from bulk transcriptomics data please see the following github repository []
+To calculate expression of TME signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
 
 #### Format Preparation
 The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
