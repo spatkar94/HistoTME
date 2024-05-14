@@ -18,18 +18,37 @@ pip install -r requirements.txt
 ```
 ## How to use
 ### Data Preparation
+#### TCGA and CPTAC data
 The TCGA and CPTAC data can be found in the following links: [][]. The data should be preprocessed using:
-> PREPROCESS SCRIPT
+```
+PREPROCESS SCRIPT
+```
 
 Deconvolution of bulk-transcriptomics into TME signatures can be calculated using:
-> Deconvolution script
+```
+Deconvolution script
+```
 
-### Format Preparation
-The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
+#### Format Preparation
+The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_TCGA_CPTAC.csv for an example. 
 
 ### Training
+Training can be run for multi-task ABMIL or single-task ABMIL using:
+```
+HistoTME_regression/run_multitask.sh
+HistoTME_regression/run_single_tasks.sh
+```
 
-### Evaluation
+### Prediction
+Prediction can be run on the SUNY cohort using:
+```
+python HistoTME_regression/predict_SUNY.py
+```
+Predictions using multitask or singletask ABMIL can be run on the CPTAC or TCGA cohort using:
+```
+python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=CPTAC; python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=CPTAC
+python HistoTME_regression/predict_CPTAC_TCGA.py --task=singletask --cohort=TCGA; python HistoTME_regression/predict_CPTAC_TCGA.py --task=multitask --cohort=TCGA
+```
 
 ## Questions and Issues
 If you find any bugs or have any questions about this code please contact Sushant or Alex.
