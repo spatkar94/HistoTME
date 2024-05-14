@@ -16,41 +16,24 @@ def make_attention_map(epoch, mode, dataloader, model, optimizer, outRoot):
     with trange(len(dataloader), desc="{}, Epoch {}: ".format(mode, epoch)) as t:
         for data in dataloader:
             features = data['features'].to(device)
-            #labels = data['labels'].to(device)
             coords = data['coords']
             paths = data['slide_path']
             paths_np = np.array(paths).squeeze()
             paths_unique = np.unique(paths_np)
-            #print(f'####### {paths_unique}')
-            # Remember to remove softmax when getting attention map
+
             A, _ = model(features)
-            if torch.abs(A.max()) < 1:
-                print(f'ATTENTION MAP LESS THAN 1')
-            ''' 
-            labels, Y_pred = labels.squeeze(), Y_pred.squeeze()
-            result = class_result(labels, Y_pred)
-            if result == 'TP':
-                print(f'TP -> {slide}')
-            elif result == 'FP':
-                print(f'FP -> {slide}')
-            else:
-                continue
-            '''
-            #print(A.mean(), A.max(), A.min(), A.shape)
+
             A = A.squeeze().cpu().detach().numpy()
             coords = coords.squeeze().cpu().detach().numpy()
-            #print(coords.shape, A.shape)
-            #print(coords[0:10], A[0:10])
             for path in paths_unique:
                 slide = os.path.basename(path)
                 if slide.startswith('UR-PDL1-LB'):
-                    pass
-                    #continue
+                    continue
                 if os.path.exists(os.path.join(outRoot, slide)):
                     print(f" ### {os.path.join(outRoot, slide)} Exists! ###")
                     continue
 
-                print(f'Saving attention for {os.path.join(outRoot, slide)}')
+                #print(f'Saving attention for {os.path.join(outRoot, slide)}')
                 A_slide = A[paths_np==path]
                 coords_slide = coords[paths_np==path]
                     
@@ -58,10 +41,10 @@ def make_attention_map(epoch, mode, dataloader, model, optimizer, outRoot):
                     f.create_dataset('attention', data=A_slide)
                     f.create_dataset('coords', data=coords_slide)
 
-            exit()
+            t.update()
 
 def main(args):
-    _,_, test_dataset, feat_dim, multitask_list = load_dataset(args['dataset'])
+    _,_, test_dataset, feat_dim, multitask_list = load_dataset(args['dataset']), embed_type='uni')
 
     dataRoot = '/mnt/synology/ICB_Data_SUNY/UNI_features'
     all_list = os.listdir(dataRoot)
@@ -107,9 +90,7 @@ def main(args):
 if __name__ == "__main__":
     set_seed(1)
     args = {'num_workers':8}
-    #datasets = ['antitumor', 'protumor', 'cancer', 'angio']
-    #models = ['abmil_antitumor_huber', 'abmil_protumor_huber', 'abmil_cancer_huber_40epoch', 'abmil_angio_huber']
-    datasets = ['B_cells', 'Macrophages']
+    datasets = ['antitumor', 'protumor', 'cancer', 'angio']
     models = [ f'abmil_{dataset}_huber' for dataset in datasets ]
     for dataset, model in zip(datasets, models):
         args['dataset'] = dataset

@@ -29,12 +29,9 @@ class ABMIL(nn.Module):
         #data shape = N x bag_size x 768 (N is batch_size)
         A = self.attention(data) # N x bag_size x K
         A = A.permute(0,2,1) # N x K x bag_size
-        #A_noSM = A.clone()
         A = F.softmax(A, dim=2)  # softmax over bag_size
-        #print(A.shape, A.mean(), A.max(), A.min())
         
         M = torch.bmm(A, data)  # N x K x L
-        #Y_prob = self.linear(M)
         Y = self.classifier(M)
 
         return Y, A
@@ -79,9 +76,7 @@ class multitask_ABMIL(ABMIL):
         #data shape = N x bag_size x 768 (N is batch_size)
         A = self.attention(data) # N x bag_size x K
         A = A.permute(0,2,1) # N x K x bag_size
-        #A_noSM = A.clone()
         A = F.softmax(A, dim=2)  # softmax over bag_size
-        #print(A.shape, A.mean(), A.max(), A.min())
         
         M = torch.bmm(A, data)  # N x K x L
         
@@ -112,4 +107,7 @@ class ABMIL_attention_map(multitask_ABMIL):
             outputs_multi[key] = classifier(M)
 
         return A, outputs_multi
+
+
+
 
