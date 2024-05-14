@@ -13,20 +13,21 @@ import re
 
 device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
 
-def predict(epoch, mode, dataloader, model, optimizer, outRoot):
+def predict(epoch, mode, dataloader, model, optimizer):
     predictions = {}
     with trange(len(dataloader), desc="{}, Epoch {}: ".format(mode, epoch)) as t:
         for data in dataloader:
             features = data['features'].to(device)
             ID = data['ID'][0]
             predictions[ID] = {}
-            #labels = data['labels'].to(device)
-            # Remember to remove softmax when getting attention map
+
             A, multitask_slide_preds = model(features)
             
             for key in multitask_slide_preds.keys():
                 multitask_pred = multitask_slide_preds[key].squeeze().detach().cpu().numpy()
                 predictions[ID][key] = multitask_pred
+
+            t.update()
         
     df = pd.DataFrame.from_dict(predictions, orient='index')
     df.reset_index(inplace=True)
@@ -39,7 +40,7 @@ def get_id(x):
     return x[0:14]
 
 def main(args):
-    _, _, test_dataset, feat_dim, multitask_list = load_dataset(args['dataset'], args['embed'])
+    _, _, _, feat_dim, multitask_list = load_dataset(args['dataset'])
     
     dataRoot = '/mnt/synology/ICB_Data_SUNY/UNI_features'
     all_list = os.listdir(dataRoot)
@@ -66,58 +67,32 @@ def main(args):
 
     load_model = args['load']
     save = load_model + '_regression'
-    outRoot = f'/mnt/synology/ICB_Data_SUNY/attention_maps/{save}'
     
-    if not os.path.exists(outRoot):
-        os.makedirs(outRoot)
-
     task_counts = {}
     for task in multitask_list:
         task_counts[task] = 1
     test_loader = build_mil_loader(args, test_dataset, "test", None, task_counts)
 
-    if load_model.startswith('abmil'):
-        model = multitask_ABMIL(task_counts, feat_dim, 1)
-    elif load_model.startswith('acmil'):
-        model = multitask_ACMIL(task_counts, feat_dim, 1)
+    model = multitask_ABMIL(task_counts, feat_dim, 1)
     model = model.to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=1e-4)
 
-    best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", args['embed'], load_model), optimizer)
+    best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", load_model), optimizer)
     model.eval()
-    return predict(best_epoch, "test", test_loader, model, optimizer, outRoot) 
-
-def make_csv(datasets, models, args, task):
-    df_all = []
-    count = 1
-    for dataset, model in zip(datasets, models):
-        print(f'Starting on {dataset} {count}/{len(datasets)}')
-        args['dataset'] = dataset
-        args['load'] = model
-        df = main(args)
-        df_all.append(df)
-        count+=1
-
-    df_new = df_all[0]
-    for i in range(len(df_all)-1):
-        df_new = pd.merge(df_new, df_all[i+1], on='ID')
-
-    df_new.to_csv(f'predictions/suny_predictions_{task}_UNI.csv', index=False)
-    
+    return predict(best_epoch, "test", test_loader, model, optimizer) 
 
 if __name__ == "__main__":
     set_seed(1)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--task", type=str, help="Single-task or multi-task model")
+    parser.add_argument("--task", type=str, help="task type for model to predict")
     parser.add_argument("--num_workers", default=8, type=int)
-    parser.add_argument("--embed", default='uni', type=str)
     args_namespace = parser.parse_args()
- 
     args = vars(args_namespace)
+
     if args['task'] is None:
-        print('Please include a task type and cohort. For example -> --task=singletask')
+        print('Please include a task type. For example -> --task=singletask')
         exit()
 
     task = args['task']
@@ -125,18 +100,17 @@ if __name__ == "__main__":
     if task == 'multitask':
         # For multitask
         datasets = ['antitumor', 'protumor', 'cancer', 'angio']
-        models = ['abmil_antitumor_huber', 'abmil_protumor_huber', 'abmil_cancer_huber', 'abmil_angio_huber']
     elif task == 'singletask':
         # for singletask
-        datasets = ['IFNG', 'MHCI', 'MHCII', 'Coactivation_molecules', 'Effector_cells', 'T_cell_traffic', 'NK_cells', 'T_cells', 'B_cells', '    M1_signatures',
-                    'Th1_signature', 'Antitumor_cytokines', 'Checkpoint_inhibition', 'Treg', 'T_reg_traffic', 'Neutrophil_signature', 'Granulo    cyte_traffic',
-                    'MDSC', 'MDSC_traffic', 'Macrophages', 'Macrophage_DC_traffic', 'Th2_signature', 'Protumor_cytokines', 'CAF', 'Matrix', 'M    atrix_remodeling',
+        datasets = ['IFNG', 'MHCI', 'MHCII', 'Coactivation_molecules', 'Effector_cells', 'T_cell_traffic', 'NK_cells', 'T_cells', 'B_cells', 'M1_signatures',
+                    'Th1_signature', 'Antitumor_cytokines', 'Checkpoint_inhibition', 'Treg', 'T_reg_traffic', 'Neutrophil_signature', 'Granulocyte_traffic',
+                    'MDSC', 'MDSC_traffic', 'Macrophages', 'Macrophage_DC_traffic', 'Th2_signature', 'Protumor_cytokines', 'CAF', 'Matrix', 'Matrix_remodeling',
                     'Angiogenesis', 'Endothelium', 'Proliferation_rate', 'EMT_signature']
-        models = [ f'abmil_{dataset}_huber' for dataset in datasets ]
     else:
         raise Exception('Please enter a valid task type')
- 
+     
     models = [ f'abmil_{dataset}_huber' for dataset in datasets ]
+
     df_all = []
     count = 1
     for dataset, model in zip(datasets, models):
@@ -155,4 +129,3 @@ if __name__ == "__main__":
         os.mkdir('predictions/')
     df_new.to_csv(f'predictions/SUNY_predictions_{task}_UNI.csv', index=False)
 
-    

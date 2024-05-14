@@ -26,6 +26,8 @@ def predict(epoch, mode, dataloader, model, optimizer):
             for key in multitask_slide_preds.keys():
                 multitask_pred = multitask_slide_preds[key].squeeze().detach().cpu().numpy()
                 predictions[ID][key] = multitask_pred
+
+            t.update()
         
     df = pd.DataFrame.from_dict(predictions, orient='index')
     df.reset_index(inplace=True)
