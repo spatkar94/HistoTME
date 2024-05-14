@@ -77,7 +77,14 @@ python get_heatmaps.py
 ```
 These can then be visualized using:
 ```
-@Sushant script for attention visualization
+cd HistoTME_regression/
+python generate_attn_maps.py \
+--svs_loc </path/to/svs/files> \
+--attn_maps_loc </path/to/raw/attention/values> \
+--patch_size <selected patch size, default = 512> \
+--mag <selected magnification, default = 20> \
+--out_dir </path/to/output/directory>
+
 ```
 
 ## Questions and Issues
