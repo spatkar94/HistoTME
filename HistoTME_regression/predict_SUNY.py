@@ -40,7 +40,7 @@ def get_id(x):
     return x[0:14]
 
 def main(args):
-    _, _, _, feat_dim, multitask_list = load_dataset(args['dataset'])
+    _, _, _, feat_dim, multitask_list = load_dataset(args['dataset'], args['embed'])
     
     dataRoot = '/mnt/synology/ICB_Data_SUNY/UNI_features'
     all_list = os.listdir(dataRoot)
@@ -78,7 +78,7 @@ def main(args):
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=1e-4)
 
-    best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", load_model), optimizer)
+    best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", args['embed'], load_model), optimizer)
     model.eval()
     return predict(best_epoch, "test", test_loader, model, optimizer) 
 
@@ -88,6 +88,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--task", type=str, help="task type for model to predict")
     parser.add_argument("--num_workers", default=8, type=int)
+    parser.add_argument("--embed", default='uni', type=str)
     args_namespace = parser.parse_args()
     args = vars(args_namespace)
 

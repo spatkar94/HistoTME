@@ -4,8 +4,8 @@ import argparse
 import numpy as np
 import torch.nn as nn
 from tqdm import trange
-from tensorboardX import SummaryWriter
 from scipy.stats import pearsonr
+from tensorboardX import SummaryWriter
 
 from model import *
 from tqdm import tqdm

@@ -44,7 +44,7 @@ def make_attention_map(epoch, mode, dataloader, model, optimizer, outRoot):
             t.update()
 
 def main(args):
-    _,_, test_dataset, feat_dim, multitask_list = load_dataset(args['dataset']), embed_type='uni')
+    _,_, _, feat_dim, multitask_list = load_dataset(args['dataset'], embed_type='uni')
 
     dataRoot = '/mnt/synology/ICB_Data_SUNY/UNI_features'
     all_list = os.listdir(dataRoot)
@@ -83,7 +83,7 @@ def main(args):
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=1e-4)
 
-    best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", load_model), optimizer)
+    best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", 'uni', load_model), optimizer)
     model.eval()
     make_attention_map(best_epoch, "test", test_loader, model, optimizer, outRoot) 
 
