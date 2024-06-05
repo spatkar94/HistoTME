@@ -7,7 +7,7 @@ HistoTME
 Implementation of HistoTME in our paper "Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients":
 [Citation]
 
-The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (ABMIL) to predict TME signatures derived from bulk transcriptomics. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
+The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME signatures derived from bulk transcriptomics. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
 
 The code in the folder HistoTME_downstream can be used to run downstream prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs. _______ **stuff on clustering downstream**
 
@@ -46,7 +46,7 @@ To calculate expression of TME signatures from bulk transcriptomics data please 
 The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
 
 ### Training
-Training can be run for multi-task ABMIL or single-task ABMIL using:
+Training can be run for multi-task or single-task AB-MIL using:
 ```
 cd HistoTME_regression/
 ./run_multitask.sh
@@ -60,7 +60,7 @@ cd HistoTME_regression/
 python predict_SUNY.py --task=multitask
 python predict_SUNY.py --task=singletask
 ```
-Predictions using multitask or singletask ABMIL can be run on the CPTAC or TCGA cohort using:
+Predictions using multitask or singletask AB-MIL can be run on the CPTAC or TCGA cohort using:
 ```
 cd HistoTME_regression/
 python predict_CPTAC_TCGA.py --task=multitask --cohort=CPTAC
