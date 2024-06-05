@@ -1,7 +1,7 @@
 HistoTME
 ==============
 
-# Predicting the tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images 
+# Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients
 
 ## Overview 
 Implementation of HistoTME in our paper "Predicting tumor microenvironment composition and immunotherapy response in non-small cell lung cancer from digital histopathology images":
