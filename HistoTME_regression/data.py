@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import h5py
 
+GROUND_TRUTH_PATH = '/mnt/synology/ICB_Data_SUNY/merged_masterfile_tme_signatures.csv'
+
 def get_source(row): 
     if os.path.basename(row['file_path']).startswith('UR-PDL1'):
         return 'SUNY'
@@ -28,7 +30,7 @@ def load_dataset(name, embed_type):
     Load a dataframe containing file paths for a dataset    
     """
     non_feature_columns = ['ID', 'file_path', 'response_label','split']
-    csv_path = '/mnt/synology/ICB_Data_SUNY/merged_masterfile_tme_signatures.csv'
+    csv_path = GROUND_TRUTH_PATH
 
     df = pd.read_csv(csv_path)
     if embed_type.lower() == 'ctranspath':
