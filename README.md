@@ -88,13 +88,11 @@ python generate_attn_maps.py \
 ```
 
 ## Questions and Issues
-If you find any bugs or have any questions about this code please contact Sushant or Alex.
+If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
 
 ## Citation
 If you found our work useful in your research please consider citing our paper:
 
 ## Acknowledgments
+This project was supported by an award from Upstate Foundation's Hendricks Endowment. Data (digital images and clinical meta-data) from the institutional cohort was generated at the Pathology Research Core Lab using institutional resources and support. 
 
-
-
-Testing
