@@ -91,7 +91,10 @@ python generate_attn_maps.py \
 If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
 
 ## Citation
-If you found our work useful in your research please consider citing our paper:
+If you found our work useful in your research please consider citing our paper as follows: 
+```
+Patkar S, Chen A, et al., Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients. Journal XX, Volume XX
+```
 
 ## Acknowledgments
 This project was supported by an award from Upstate Foundation's Hendricks Endowment. Data (digital images and clinical meta-data) from the institutional cohort was generated at the Pathology Research Core Lab using institutional resources and support. 
