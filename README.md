@@ -4,9 +4,6 @@ HistoTME
 # Predicting the tumor microenvironment composition and immunotherapy responses in non-small cell lung cancer from digital histopathology images
 
 ## Overview 
-Implementation of HistoTME in our paper "Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients":
-[Citation]
-
 The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME signatures derived from bulk transcriptomics. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
 
 The code in the folder HistoTME_downstream can be used to run downstream unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs.
