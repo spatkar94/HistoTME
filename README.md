@@ -95,7 +95,17 @@ If you find any bugs or have any questions about this code please contact: [Sush
 ## Citation
 If you found our work useful in your research please consider citing our paper as follows: 
 ```
-Patkar S, Chen A, et al., Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients. Journal XX, Volume XX
+@article {Patkar2024.06.11.24308696,
+	author = {Patkar, Sushant and Chen, Alex and Basnet, Alina and Bixby, Amber and Rajendran, Rahul and Chernet, Rachel and Faso, Susan and Kumar, Prashant A. and Desai, Devashish and El-Zammar, Ola and Curtiss, Christopher and Carello, Saverio J. and Nasr, Michel and Choyke, Peter and Harmon, Stephanie and Turkbey, Baris and Jamaspishvili, Tamara},
+	title = {Predicting the Tumor Microenvironment Composition and Immunotherapy Response in Non-Small Cell Lung Cancer from Digital Histopathology Images},
+	elocation-id = {2024.06.11.24308696},
+	year = {2024},
+	doi = {10.1101/2024.06.11.24308696},
+	publisher = {Cold Spring Harbor Laboratory Press},
+  URL = {https://www.medrxiv.org/content/early/2024/06/12/2024.06.11.24308696},
+	eprint = {https://www.medrxiv.org/content/early/2024/06/12/2024.06.11.24308696.full.pdf},
+	journal = {medRxiv}
+}
 ```
 
 ## Acknowledgments
