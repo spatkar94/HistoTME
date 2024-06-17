@@ -1,7 +1,7 @@
 HistoTME
 ==============
 
-# Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients
+# Predicting the tumor microenvironment composition and immunotherapy responses in non-small cell lung cancer from digital histopathology images
 
 ## Overview 
 Implementation of HistoTME in our paper "Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients":
@@ -43,7 +43,7 @@ dict{'coords': (x,y), 'features': <embeddings>}
 To calculate expression of TME signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
 
 #### Format Preparation
-The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
+The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See [HistoTME_regression/sample_data.csv](HistoTME_regression/sample_data.csv) for an example. 
 
 ### Training
 Training can be run for multi-task or single-task AB-MIL using:
@@ -86,6 +86,8 @@ python generate_attn_maps.py \
 --out_dir </path/to/output/directory>
 
 ```
+## Model weights and clinical metadata
+HistoTME model weights and clinical metadata necessary to reproduce the results described in our paper are available at: [https://zenodo.org/records/11490460](https://zenodo.org/records/11490460)
 
 ## Questions and Issues
 If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
