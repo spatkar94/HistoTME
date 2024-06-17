@@ -14,7 +14,7 @@ The code in the folder HistoTME_downstream can be used to run downstream unsuper
 Manuscript preprint available [here](https://www.medrxiv.org/content/10.1101/2024.06.11.24308696v1).
 
 ## Installation and prerequisites
-Tested with Python 3.9. Tested on both GPU (should I test on CPU?). Install requirements using:
+Tested with Python 3.9. Install requirements using:
 ```
 pip install -r requirements.txt
 ```
