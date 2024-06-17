@@ -11,6 +11,8 @@ The code in the folder HistoTME_regression can be used to run attention-based mu
 
 The code in the folder HistoTME_downstream can be used to run downstream unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs.
 
+Manuscript preprint available [here](https://www.medrxiv.org/content/10.1101/2024.06.11.24308696v1).
+
 ## Installation and prerequisites
 Tested with Python 3.9. Tested on both GPU (should I test on CPU?). Install requirements using:
 ```
@@ -93,7 +95,7 @@ HistoTME model weights and clinical metadata necessary to reproduce the results 
 If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
 
 ## Citation
-If you found our work useful in your research please consider citing our paper as follows: 
+If you found our work useful in your research please consider citing this work as follows: 
 ```
 @article {Patkar2024.06.11.24308696,
 	author = {Patkar, Sushant and Chen, Alex and Basnet, Alina and Bixby, Amber and Rajendran, Rahul and Chernet, Rachel and Faso, Susan and Kumar, Prashant A. and Desai, Devashish and El-Zammar, Ola and Curtiss, Christopher and Carello, Saverio J. and Nasr, Michel and Choyke, Peter and Harmon, Stephanie and Turkbey, Baris and Jamaspishvili, Tamara},
