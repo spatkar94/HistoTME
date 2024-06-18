@@ -1,18 +1,17 @@
 HistoTME
 ==============
 
-# Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients
+# Predicting the tumor microenvironment composition and immunotherapy responses in non-small cell lung cancer from digital histopathology images
 
 ## Overview 
-Implementation of HistoTME in our paper "Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients":
-[Citation]
-
 The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME signatures derived from bulk transcriptomics. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
 
 The code in the folder HistoTME_downstream can be used to run downstream unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs.
 
+Manuscript preprint available [here](https://www.medrxiv.org/content/10.1101/2024.06.11.24308696v1).
+
 ## Installation and prerequisites
-Tested with Python 3.9. Tested on both GPU (should I test on CPU?). Install requirements using:
+Tested with Python 3.9. Install requirements using:
 ```
 pip install -r requirements.txt
 ```
@@ -43,7 +42,7 @@ dict{'coords': (x,y), 'features': <embeddings>}
 To calculate expression of TME signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
 
 #### Format Preparation
-The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See HistoTME_regression/sample_data.csv for an example. 
+The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See [HistoTME_regression/sample_data.csv](HistoTME_regression/sample_data.csv) for an example. 
 
 ### Training
 Training can be run for multi-task or single-task AB-MIL using:
@@ -86,14 +85,26 @@ python generate_attn_maps.py \
 --out_dir </path/to/output/directory>
 
 ```
+## Model weights and clinical metadata
+HistoTME model weights and clinical metadata necessary to reproduce the results described in our paper are available at: [https://zenodo.org/records/11490460](https://zenodo.org/records/11490460). The model weights are intended to be used for research purposes only. Please see the [license](LICENSE)
 
 ## Questions and Issues
 If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
 
 ## Citation
-If you found our work useful in your research please consider citing our paper as follows: 
+If you found our work useful in your research please consider citing this work as follows: 
 ```
-Patkar S, Chen A, et al., Predicting the tumor microenvironment molecular composition from histopathology images to characterize immunotherapy responses in non-small cell lung cancer patients. Journal XX, Volume XX
+@article {Patkar2024.06.11.24308696,
+	author = {Patkar, Sushant and Chen, Alex and Basnet, Alina and Bixby, Amber and Rajendran, Rahul and Chernet, Rachel and Faso, Susan and Kumar, Prashant A. and Desai, Devashish and El-Zammar, Ola and Curtiss, Christopher and Carello, Saverio J. and Nasr, Michel and Choyke, Peter and Harmon, Stephanie and Turkbey, Baris and Jamaspishvili, Tamara},
+	title = {Predicting the Tumor Microenvironment Composition and Immunotherapy Response in Non-Small Cell Lung Cancer from Digital Histopathology Images},
+	elocation-id = {2024.06.11.24308696},
+	year = {2024},
+	doi = {10.1101/2024.06.11.24308696},
+	publisher = {Cold Spring Harbor Laboratory Press},
+  URL = {https://www.medrxiv.org/content/early/2024/06/12/2024.06.11.24308696},
+	eprint = {https://www.medrxiv.org/content/early/2024/06/12/2024.06.11.24308696.full.pdf},
+	journal = {medRxiv}
+}
 ```
 
 ## Acknowledgments
