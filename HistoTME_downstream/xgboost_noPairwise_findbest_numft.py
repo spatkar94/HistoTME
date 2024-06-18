@@ -19,8 +19,6 @@ def main(seed):
     if 'ID' in df.columns:
         df = df.drop(columns='ID')
 
-    print(df)
-
     X = df.drop(['response_label'], axis=1)
     Y = df[['response_label']]
     y_encoded = OrdinalEncoder().fit_transform(Y)
@@ -36,7 +34,6 @@ def main(seed):
     auc_dict = {}
     for num_ft in num_ft_choices:
         features = rf_selection(X_train, y_train.ravel(), n=num_ft)
-        print(len(features), features[:10])
         if len(features) < num_ft:
             break
 
@@ -81,8 +78,6 @@ def main(seed):
     df_auc.to_csv('cv_auc/ft_selection_cv_auc.csv', index=False)
 
     features = rf_selection(X_train, y_train.ravel(), n=best_num_ft)
-    print('')
-    print(len(features), features[:10])
     
     dtrain_clf = xgb.DMatrix(X_train[features], y_train, enable_categorical=True)
     dtest_clf = xgb.DMatrix(X_test[features], y_test, enable_categorical=True)

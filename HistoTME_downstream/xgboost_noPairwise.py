@@ -21,7 +21,6 @@ def main(seed):
     if 'ID' in df.columns:
         df = df.drop(columns='ID')
 
-    print(df)
 
     X = df.drop(columns='response_label')
     Y = df[['response_label']]
@@ -31,7 +30,7 @@ def main(seed):
     X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, random_state=seed, stratify=y_encoded, test_size=test_size)
 
     features = rf_selection(X_train, y_train.ravel(), n=2)
-    print(len(features), features)
+
     X_train = X_train[features]
     X_test = X_test[features]
 
