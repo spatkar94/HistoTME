@@ -29,7 +29,7 @@ The TCGA and CPTAC whole slide imaging data can be found online from [GDC](https
 │   ├── slide_N.svs
 
 ```
-After downloading the WSI run the following WSI preprocessing script to tesselate each whole slide image into a collection of non-overlapping 512x512 pixel tiles scanned at 20x magnification and extract features using UNI[], a pre-trained foundation model:
+After downloading the WSI run the following WSI preprocessing script to tesselate each whole slide image into a collection of non-overlapping 512x512 pixel tiles scanned at 20x magnification and extract features using [UNI](https://huggingface.co/MahmoodLab/UNI), a pre-trained foundation model:
 ```
 cd data_preprocessing/
 ./run_UNI.sh
