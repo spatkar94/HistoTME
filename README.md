@@ -85,8 +85,8 @@ python generate_attn_maps.py \
 --out_dir </path/to/output/directory>
 
 ```
-## Model weights and clinical metadata
-HistoTME model weights and clinical metadata necessary to reproduce the results will be made available upon request. The codes are intended to be used for research purposes only. Please see the [license](LICENSE)
+## Model weights
+For inquiries about HistoTME model weights please contact the corresponding authors directly.  The codes are intended to be used for research purposes only. Please see the [license](LICENSE)
 
 ## Questions and Issues
 If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
