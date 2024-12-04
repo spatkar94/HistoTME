@@ -1,7 +1,7 @@
 HistoTME
 ==============
 ![](HistoTME_regression/HistoTME_outline.png)
-# Predicting the tumor microenvironment composition and immunotherapy responses in non-small cell lung cancer from digital histopathology images
+
 
 ## Overview 
 The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME signatures derived from bulk transcriptomics. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
