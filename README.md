@@ -4,7 +4,7 @@ HistoTME
 
 
 ## Overview 
-The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME signatures derived from bulk transcriptomics. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
+The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME molecular signatures from histopathology slides. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
 
 The code in the folder HistoTME_downstream can be used to run downstream unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs.
 
