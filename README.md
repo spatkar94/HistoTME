@@ -1,6 +1,6 @@
 HistoTME
 ==============
-
+![](HistoTME_regression/HistoTME_outline.png)
 # Predicting the tumor microenvironment composition and immunotherapy responses in non-small cell lung cancer from digital histopathology images
 
 ## Overview 
