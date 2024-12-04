@@ -1,8 +1,6 @@
 # Define Paths to clinical metadata files, HistoTME prediction files, IHC Validation files, output directory
 
-replace existing paths to those saved on your computer. The clinical
-metadata files, HistoTME prediction files and IHC Validation files can
-be found on [zenodo](10.5281/zenodo.11490460)
+replace existing paths to those saved on your computer.
 
 ``` r
 CLINICAL_METADATA_PATH = "~/Tamara_ICB_response/SUNY_FINAL_clinical_data_with_PFS_corrected_050224.tsv"
