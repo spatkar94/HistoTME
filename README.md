@@ -53,12 +53,6 @@ cd HistoTME_regression/
 ```
 
 ### Prediction
-Predictions can be run on the SUNY cohort using:
-```
-cd HistoTME_regression/
-python predict_SUNY.py --task=multitask
-python predict_SUNY.py --task=singletask
-```
 Predictions using multitask or singletask AB-MIL can be run on the CPTAC or TCGA cohort using:
 ```
 cd HistoTME_regression/
