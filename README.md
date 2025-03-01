@@ -15,6 +15,8 @@ Tested with Python 3.9. Install requirements using:
 ```
 pip install -r requirements.txt
 ```
+Note the preprocessing script makes use of ink marking removal codes from the following [repository](https://github.com/lucasrla/wsi-tile-cleanup).
+
 ## How to use
 ### Data Preparation
 #### TCGA and CPTAC data
