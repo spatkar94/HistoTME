@@ -1,8 +1,8 @@
 import os
 import torch
-import random
+import glob
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
-from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 import h5py
 from tqdm import tqdm
 import numpy as np
@@ -10,110 +10,10 @@ import pandas as pd
 import h5py
 import re
 
-GROUND_TRUTH_PATH = '/mnt/synology/ICB_Data_SUNY/merged_masterfile_tme_signatures.csv'
-
-def get_source(row): 
-    if os.path.basename(row['file_path']).startswith('UR-PDL1'):
-        return 'SUNY'
-    elif os.path.basename(row['file_path']).startswith('TCGA'):
-        return 'TCGA'
-    elif os.path.basename(row['file_path']).startswith('C3'):
-        return 'CPTAC'
-def get_split(row):
-    if get_source(row)=='TCGA':
-        return 'TRAIN'
-    elif get_source(row)=='CPTAC':
-        return 'VAL'
-    else:
-        return 'TEST'
-
-def load_dataset(name, embed_type):
-    """
-    Load a dataframe containing file paths for a dataset    
-    """
-    non_feature_columns = ['ID', 'file_path', 'response_label','split']
-    csv_path = GROUND_TRUTH_PATH
-
-    df = pd.read_csv(csv_path)
-    if embed_type.lower() == 'ctranspath':
-        pass
-    elif embed_type.lower() == 'retccl':
-        df['file_path'] = df['file_path'].apply(lambda x: x.replace('transpath_features', 'retccl_features'))
-    elif embed_type.lower() == 'uni':
-        df['file_path'] = df['file_path'].apply(lambda x: x.replace('transpath_features', 'UNI_features'))
-    else:
-        raise Exception(f"{embed_type} is not a valid embedding. Please select from ctranspath, retccl, or uni...")
-
-    if name == "tme": 
-        pass
-    elif name == 'suny':
-        df['source'] = df.apply(lambda row: get_source(row), axis=1)
-        df = df[df['source'] == 'SUNY']
-        df = df[non_feature_columns]
-    elif name == 'tme_ft_pred':
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-    elif name == 'ifng':
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-        df = df[non_feature_columns]
-    elif name == 'protumor':
-        features = ['Checkpoint_inhibition', 'Macrophage_DC_traffic', 'T_reg_traffic', 'Treg', 
-                    'Th2_signature', 'Macrophages', 'Neutrophil_signature', 'Granulocyte_traffic', 
-                    'MDSC_traffic', 'MDSC', 'Protumor_cytokines'] # 11 features
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-        df = df[features + non_feature_columns]
-    elif name == 'antitumor':
-        features = ['MHCI', 'MHCII', 'Coactivation_molecules', 'Effector_cells', 'T_cells', 
-                    'T_cell_traffic', 'NK_cells', 'B_cells', 'M1_signatures', 'Th1_signature', 
-                    'Antitumor_cytokines', 'IFNG'] # 12 features
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-        df = df[features + non_feature_columns]
-    elif name == 'angio':
-        features = ['Matrix', 'Matrix_remodeling', 'Endothelium', 'CAF', 'Angiogenesis'] # 5 features
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-        df = df[features + non_feature_columns]
-    elif name == 'cancer':
-        features = ['Proliferation_rate', 'EMT_signature']
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-        df = df[features + non_feature_columns]
-    elif name == 'macrophage':
-        features = ['Macrophage_DC_traffic', 'Macrophages', 'M1_signatures', 'MHCII', 'IFNG']    
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-        df = df[features + non_feature_columns]
-    elif name in df.columns:
-        df['split'] = df.apply(lambda row: get_split(row), axis=1)
-        df = df[non_feature_columns + [name]]
-    else:
-        print('Please choose a valid name. Exiting...')
-        exit()
-
-    multitasks = df.drop(columns=non_feature_columns).columns.tolist()
-
-    df_dummy = pd.get_dummies(df, columns=['response_label'], dtype=int)
-    df_dummy.loc[df.response_label.isnull(), df_dummy.columns.str.startswith('response_label')] = -999
-    df = df_dummy
-
-    # grouping together patients with multiple slides
-    grouped_paths = df.groupby('ID')['file_path'].apply(list).reset_index()
-    df = df.drop('file_path', axis=1).drop_duplicates()
-    df = pd.merge(df, grouped_paths, on='ID', how='left')
-
-    train_tiles = df[df['split']=='TRAIN']
-    val_tiles = df[df['split']=='VAL']
-    test_tiles = df[df['split']=='TEST']
-
-    print(f"length of train tiles = {len(train_tiles)} | length of validation tiles = {len(val_tiles)} | length of test tiles = {len(test_tiles)}")
-    
-    slide_path = df.iloc[0]['file_path'][0]
-    with h5py.File(slide_path, 'r') as f: # coords, features
-        #coords = f['coords'][()]
-        features = f['features'][()]
-
-    feat_dim=features.shape[1]  # shape of pre-trained embeddings
-    return train_tiles, val_tiles, test_tiles, feat_dim, multitasks
-
 def load_data_tcga(ctypes, signatures, embeddings_folder, n_splits = 5):
     """
-    Load dataframe containing WSI FM embedding file paths and mol signatures from TCGA    
+    Create master dataframe containing WSI FM embedding file paths and mol signatures from TCGA.
+    Returns stratified K-fold CV splits    
     """
     import glob
     from sklearn.model_selection import train_test_split
@@ -122,6 +22,7 @@ def load_data_tcga(ctypes, signatures, embeddings_folder, n_splits = 5):
     tcga_clindata = pd.read_excel('/mnt/synology/ICB_Data_SUNY/TCGA-CDR-SupplementalTableS1.xlsx',index_col=0)
     tme_signatures.rename(columns={'Unnamed: 0':'bcr_patient_barcode'}, inplace=True)
     embedding_paths = []
+
     for ext in ['*.hdf5','*.h5']:
         embedding_paths.extend(glob.glob(os.path.join(embeddings_folder,ext)))
     tcga_dataset['bcr_patient_barcode'] = [os.path.basename(x)[:12] for x in embedding_paths]
@@ -167,19 +68,14 @@ def load_data_tcga(ctypes, signatures, embeddings_folder, n_splits = 5):
     
     if not ctypes == 'all':
         df = df[df['type'].isin(ctypes)]
-    #df.drop('type',axis=1, inplace=True)
 
     # grouping together patients with multiple slides
     grouped_paths = df.groupby('ID')['file_path'].apply(list).reset_index()
     df = df.drop('file_path', axis=1).drop_duplicates()
     df = pd.merge(df, grouped_paths, on='ID', how='left')
 
-    #print(df.columns)
     # Create a KFold object
     kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-    # Split the DataFrame into 80% train and 20% val
-
-    #df_train, df_val = train_test_split(df, test_size=0.2, random_state=42)
 
     train_val_splits = {}
     for fold, (train_index, val_index) in enumerate(kf.split(X = df['file_path'], y=df['type'])):
@@ -191,18 +87,12 @@ def load_data_tcga(ctypes, signatures, embeddings_folder, n_splits = 5):
         train_val_splits[fold]['train'] = df_train
         train_val_splits[fold]['val'] = df_val
 
-        #print(df_train['type'].value_counts())
-        #print(df_val['type'].value_counts())
-
-    #train_val_splits['train'] = df_train
-    #train_val_splits['val'] = df_val
-
-    #print(train_val_splits['train']['type'].value_counts().T)
-    #print(train_val_splits['val']['type'].value_counts().T)
     
     embedding_dim = 0
-    if 'UNI' in embedding_paths[0]:
+    if 'UNI_v1' in embedding_paths[0]:
         embedding_dim = 1024
+    elif 'UNI_v2' in embedding_paths[0]:
+        embedding_dim = 1536
     elif 'Virchow' in embedding_paths[0]:
         embedding_dim = 2560
     elif 'Hoptimus0' in embedding_paths[0]:
@@ -212,50 +102,115 @@ def load_data_tcga(ctypes, signatures, embeddings_folder, n_splits = 5):
     
     return train_val_splits, embedding_dim, pred_tasks
 
-def get_id(x):
-    # remove parentheses (a)
-    x = re.sub(r"\([^()]*\)", '', x)
-    return x[0:14]
-
-def get_id2(x):
-    # remove suffix
-    x = x.split('_')[0]
-    return x
-
-def load_data(signatures, embeddings_folder, cancer_type = "NSCLC"):
-    import glob
+def load_data_cptac(signature_group, embeddings_folder, cancer_type):
+    """
+    Load dataframe containing WSI FM embedding file paths and mol signatures from CPTAC   
+    """
+    cptac_dataset = pd.DataFrame({})
+    tme_signatures = pd.read_csv(f'/mnt/synology/ICB_Data_SUNY/cptac_tme_signatures_{cancer_type}.csv')
+    
+    tme_signatures.rename(columns={'Unnamed: 0':'bcr_patient_barcode'}, inplace=True)
     embedding_paths = []
     for ext in ['*.hdf5','*.h5']:
         embedding_paths.extend(glob.glob(os.path.join(embeddings_folder,ext)))
+    cptac_dataset['bcr_patient_barcode'] = [os.path.basename(x)[:9] for x in embedding_paths]
+    cptac_dataset['embedding_paths'] = embedding_paths
+    cptac_dataset = pd.merge(cptac_dataset, tme_signatures, on=['bcr_patient_barcode'], how="inner")
+    cptac_dataset['type'] = cancer_type
+    non_sig_columns = ['bcr_patient_barcode','embedding_paths','type']
+    
     pred_tasks = []
-    if signatures == 'protumor':
+    if signature_group == 'protumor':
         pred_tasks = ['Checkpoint_inhibition', 'Macrophage_DC_traffic', 'T_reg_traffic', 'Treg', 
                     'Th2_signature', 'Macrophages', 'Neutrophil_signature', 'Granulocyte_traffic', 
                     'MDSC_traffic', 'MDSC', 'Protumor_cytokines'] # 11 features
         
-    elif signatures == 'antitumor':
+    elif signature_group == 'antitumor':
         pred_tasks = ['MHCI', 'MHCII', 'Coactivation_molecules', 'Effector_cells', 'T_cells', 
                     'T_cell_traffic', 'NK_cells', 'B_cells', 'M1_signatures', 'Th1_signature', 
                     'Antitumor_cytokines'] # 12 features
         
-    elif signatures == 'angio':
+    elif signature_group == 'angio':
         pred_tasks = ['Matrix', 'Matrix_remodeling', 'Endothelium', 'CAF', 'Angiogenesis'] # 5 features
 
-    elif signatures == 'cancer':
+    elif signature_group == 'cancer':
         pred_tasks = ['Proliferation_rate', 'EMT_signature']
     
     else:
-        pred_tasks = signatures
+        #custom signature group
+        pred_tasks = signature_group
+
+    if not all(sig in cptac_dataset.columns for sig in pred_tasks):
+        raise ValueError('please verify if all signature names are correct.')
+    
+    
+    df = cptac_dataset[non_sig_columns+pred_tasks]
+    df.rename(columns = {'bcr_patient_barcode':'ID','embedding_paths':'file_path'}, inplace=True)
+    
+
+    # grouping together patients with multiple slides
+    grouped_paths = df.groupby('ID')['file_path'].apply(list).reset_index()
+    df = df.drop('file_path', axis=1).drop_duplicates()
+    df = pd.merge(df, grouped_paths, on='ID', how='left')
+
+
+    embedding_dim = 0
+    if 'UNI_v1' in embedding_paths[0]:
+        embedding_dim = 1024
+    elif 'UNI_v2' in embedding_paths[0]:
+        embedding_dim = 1536
+    elif 'Virchow' in embedding_paths[0]:
+        embedding_dim = 2560
+    elif 'Hoptimus0' in embedding_paths[0]:
+        embedding_dim = 1536
+    elif 'Gigapath' in embedding_paths[0]:
+        embedding_dim = 1536
+    
+    return df, embedding_dim, pred_tasks
+
+
+
+def load_data(signature_group, embeddings_folder, cancer_type):
+    """
+    Load master dataframe containing WSI FM embedding file paths from a test cohort  
+    """
+    # utility function to extract patient ids from specific insititutional test cohorts. 
+    # You can modify these based on cohort-specific naming convention
+    def get_pt_id(x):
+        # remove parentheses (a)
+        x = re.sub(r"\([^()]*\)", '', x)
+        return x[0:14]
+
+    embedding_paths = []
+    for ext in ['*.hdf5','*.h5']:
+        embedding_paths.extend(glob.glob(os.path.join(embeddings_folder,ext)))
+    pred_tasks = []
+    if signature_group == 'protumor':
+        pred_tasks = ['Checkpoint_inhibition', 'Macrophage_DC_traffic', 'T_reg_traffic', 'Treg', 
+                    'Th2_signature', 'Macrophages', 'Neutrophil_signature', 'Granulocyte_traffic', 
+                    'MDSC_traffic', 'MDSC', 'Protumor_cytokines'] # 11 features
+        
+    elif signature_group == 'antitumor':
+        pred_tasks = ['MHCI', 'MHCII', 'Coactivation_molecules', 'Effector_cells', 'T_cells', 
+                    'T_cell_traffic', 'NK_cells', 'B_cells', 'M1_signatures', 'Th1_signature', 
+                    'Antitumor_cytokines'] # 12 features
+        
+    elif signature_group == 'angio':
+        pred_tasks = ['Matrix', 'Matrix_remodeling', 'Endothelium', 'CAF', 'Angiogenesis'] # 5 features
+
+    elif signature_group == 'cancer':
+        pred_tasks = ['Proliferation_rate', 'EMT_signature']
+    
+    else:
+        #if a custom group of signatures is provided
+        pred_tasks = signature_group
 
     
-    df = pd.DataFrame({'ID':[os.path.basename(x).replace('_features.hdf5','') for x in embedding_paths],
+    df = pd.DataFrame({'ID':[os.path.basename(x).replace('_features.hdf5','').replace('.h5','') for x in embedding_paths],
                        'file_path':embedding_paths})
     
     if 'UR-PDL1' in df['ID'].values[0]:
-        df['ID'] = df['ID'].apply(lambda x: get_id(x))
-    
-    #if 'reg' in df['ID'].values[0]:
-    #    df['ID'] = df['ID'].apply(lambda x: get_id2(x))
+        df['ID'] = df['ID'].apply(lambda x: get_pt_id(x))
     
     grouped_paths = df.groupby('ID')['file_path'].apply(list).reset_index()
     df = df.drop('file_path', axis=1).drop_duplicates()
@@ -280,85 +235,9 @@ def load_data(signatures, embeddings_folder, cancer_type = "NSCLC"):
     
     return df, embedding_dim, pred_tasks
 
-
-def load_data_cptac(signatures, embeddings_folder, cancer_type):
-    """
-    Load dataframe containing WSI FM embedding file paths and mol signatures from TCGA    
-    """
-    import glob
-    cptac_dataset = pd.DataFrame({})
-    tme_signatures = pd.read_csv(f'/mnt/synology/ICB_Data_SUNY/cptac_tme_signatures_{cancer_type}.csv')
-    #tcga_clindata = pd.read_excel('/mnt/synology/ICB_Data_SUNY/TCGA-CDR-SupplementalTableS1.xlsx',index_col=0)
-    tme_signatures.rename(columns={'Unnamed: 0':'bcr_patient_barcode'}, inplace=True)
-    embedding_paths = []
-    for ext in ['*.hdf5','*.h5']:
-        embedding_paths.extend(glob.glob(os.path.join(embeddings_folder,ext)))
-    cptac_dataset['bcr_patient_barcode'] = [os.path.basename(x)[:9] for x in embedding_paths]
-    cptac_dataset['embedding_paths'] = embedding_paths
-    cptac_dataset = pd.merge(cptac_dataset, tme_signatures, on=['bcr_patient_barcode'], how="inner")
-    cptac_dataset['type'] = cancer_type
-    non_sig_columns = ['bcr_patient_barcode','embedding_paths','type']
-    
-    pred_tasks = []
-    if signatures == 'protumor':
-        pred_tasks = ['Checkpoint_inhibition', 'Macrophage_DC_traffic', 'T_reg_traffic', 'Treg', 
-                    'Th2_signature', 'Macrophages', 'Neutrophil_signature', 'Granulocyte_traffic', 
-                    'MDSC_traffic', 'MDSC', 'Protumor_cytokines'] # 11 features
-        
-    elif signatures == 'antitumor':
-        pred_tasks = ['MHCI', 'MHCII', 'Coactivation_molecules', 'Effector_cells', 'T_cells', 
-                    'T_cell_traffic', 'NK_cells', 'B_cells', 'M1_signatures', 'Th1_signature', 
-                    'Antitumor_cytokines'] # 12 features
-        
-    elif signatures == 'angio':
-        pred_tasks = ['Matrix', 'Matrix_remodeling', 'Endothelium', 'CAF', 'Angiogenesis'] # 5 features
-
-    elif signatures == 'cancer':
-        pred_tasks = ['Proliferation_rate', 'EMT_signature']
-    
-    else:
-        pred_tasks = signatures
-
-    if not all(sig in cptac_dataset.columns for sig in pred_tasks):
-        raise ValueError('please verify if all signature names are correct.')
-    
-    #if not all(type in cptac_dataset['type'].values for type in ctypes):
-    #    if not ctypes == 'all':
-    #        raise ValueError('please verify if cancer type names are correct.')
-    
-    df = cptac_dataset[non_sig_columns+pred_tasks]
-    df.rename(columns = {'bcr_patient_barcode':'ID','embedding_paths':'file_path'}, inplace=True)
-    
-    #if not ctypes == 'all':
-    #    df = df[df['type'].isin(ctypes)]
-    #df.drop('type',axis=1, inplace=True)
-
-    # grouping together patients with multiple slides
-    grouped_paths = df.groupby('ID')['file_path'].apply(list).reset_index()
-    df = df.drop('file_path', axis=1).drop_duplicates()
-    df = pd.merge(df, grouped_paths, on='ID', how='left')
-
-
-    # Split the DataFrame into 80% train and 20% val
-    #train_df, val_df = train_test_split(df, test_size=0.2, random_state=42)
-
-    embedding_dim = 0
-    if 'UNI' in embedding_paths[0]:
-        embedding_dim = 1024
-        if 'UNI2' in embedding_paths[0]:
-            embedding_dim = 1536
-    elif 'Virchow' in embedding_paths[0]:
-        embedding_dim = 2560
-    elif 'Hoptimus0' in embedding_paths[0]:
-        embedding_dim = 1536
-    elif 'Gigapath' in embedding_paths[0]:
-        embedding_dim = 1536
-    
-    return df, embedding_dim, pred_tasks
-
 class milDataset(Dataset):
     '''
-    Dataset used for attention-based MIL learning (classification)
+    Dataset class used for setting attention-based MIL learning and inference
     '''
     def __init__(self, df, task_counts=None, bag_size=None):
         super(milDataset, self).__init__()
@@ -369,8 +248,7 @@ class milDataset(Dataset):
         df_row = self.df.iloc[idx]
         ID = df_row['ID']
         slide_path = df_row['file_path']
-        #label = self.df.iloc[idx]['response_label_Responder']
-        #label = torch.from_numpy(np.asarray(label)).float()
+        
 
         # if patient has multiple slides, concatenate all tiles together
         if len(slide_path) > 1:
@@ -390,7 +268,7 @@ class milDataset(Dataset):
                 ft_np = f['features'][()]
                 coords_np = f['coords'][()]
 
-        #remove na values in TCGA-60-2710
+        #remove na values
         if np.isnan(ft_np).any():
             ft_np = ft_np[~np.isnan(ft_np).any(axis=1)]
         
@@ -405,7 +283,6 @@ class milDataset(Dataset):
         data['features'] = ft_pt
         assert not ft_pt.isnan().any(), slide_path
         data['ft_lengths'] = torch.from_numpy(np.asarray(ft_len))
-        #data['labels'] = label
         data['slide_path'] = slide_path
 
         return data
@@ -427,10 +304,9 @@ class milMultitaskDataset(Dataset):
         df_row = self.df.iloc[idx]
         ID = df_row['ID']
         slide_path = df_row['file_path']
-        #label = self.df.iloc[idx][self.df.columns.str.startswith('response_label')]
         label = df_row['type']
         
-        # getting items for multitask    
+        # getting ground truth signature scores for group of signatures   
         multitask_labels = {}
         for key in self.task_counts.keys():
             try:
@@ -446,12 +322,7 @@ class milMultitaskDataset(Dataset):
             paths = []
             for path in slide_path:
                 with h5py.File(path, 'r') as f:
-                    #if 'h5' in path:
-                    #    features.append(f['features'][()][0])
-                    #    coords.append(f['coords'][()][0])
-                    #else:
-                    #    features.append(f['features'][()])
-                    #    coords.append(f['coords'][()])
+                    #assuming features are of dim nxd, where n is number of tiles, d is embedding dim
                     features.append(f['features'][()])
                     coords.append(f['coords'][()])
                     paths = paths + [path]*f['coords'][()].shape[0]
@@ -460,12 +331,6 @@ class milMultitaskDataset(Dataset):
             slide_path = paths
         elif len(slide_path) == 1:
             with h5py.File(slide_path[0], 'r') as f:
-                #if 'h5' in slide_path[0]:
-                #    ft_np = f['features'][()][0]
-                #    coords_np = f['coords'][()][0]
-                #else:
-                #    ft_np = f['features'][()]
-                #    coords_np = f['coords'][()]
                 ft_np = f['features'][()]
                 coords_np = f['coords'][()]
         
@@ -484,6 +349,7 @@ class milMultitaskDataset(Dataset):
         data['features'] = ft_pt
         data['coords'] = coords_np
         assert not ft_pt.isnan().any(), slide_path
+
         data['ft_lengths'] = torch.from_numpy(np.asarray(ft_len))
         data['labels'] = label
         data['multitask_labels'] = multitask_labels
@@ -496,6 +362,9 @@ class milMultitaskDataset(Dataset):
         return len(self.df)
 
 def create_weighted_sampler(labels):
+    '''
+    helper function to oversample under-represented/minority classes
+    '''
     values, counts = np.unique(labels, return_counts=True)
     class_counts = dict(zip(values, counts))
     sample_weights = [1/class_counts[labels[i]] for i in range(len(labels))]
@@ -515,8 +384,6 @@ def build_mil_loader(args, df, subset, bag_size, task_counts):
 
  
     if subset == 'train':
-        #print("using weighted random sampler to balance cancer types...")
-        #weighted_sampler = create_weighted_sampler(list(df['type'].values))
         loader = DataLoader(dataset(df, task_counts, bag_size),
                          num_workers=num_workers, batch_size=args.batch_size, shuffle=True)
     else:
@@ -525,6 +392,9 @@ def build_mil_loader(args, df, subset, bag_size, task_counts):
     return loader     
 
 def _to_fixed_size_bag(bag, bag_size):
+    '''
+    helper function to sample a fixed size of tiles from WSI (if bag_size is provided) 
+    '''
     # get up to bag_size elements
     bag_idxs = torch.randperm(bag.shape[0])[:bag_size]
     bag_samples = bag[bag_idxs]
@@ -538,7 +408,11 @@ def _to_fixed_size_bag(bag, bag_size):
     )
     return zero_padded, min(bag_size, len(bag))
 
+
 class HESTWSI(Dataset):
+    '''
+    base Dataset class to facilitate ABMIL inference on HEST1K data 
+    '''
     def __init__(self, h5_path, transforms = None) -> None:
         self.coords = None
         self.patches = None
@@ -566,6 +440,11 @@ class HESTWSI(Dataset):
         return img, self.coords[index], self.barcodes[index]
 
 class SlidingWindowHEST(HESTWSI):
+    '''
+    class to run sliding window ABMIL inference on HEST1K WSI images.
+    Creates a dataset object that generates a sliding window instance of tiles within a predefined window of dimensions (window_size x window_sixe)
+
+    '''
     def __init__(self, h5_path, transforms=None, window_size = 10, stride = 1):
         super().__init__(h5_path, transforms)
 
@@ -616,6 +495,10 @@ class SlidingWindowHEST(HESTWSI):
         return data
     
 class SlidingWindow(Dataset):
+    '''
+    class to run sliding window ABMIL inference on custom WSI images.
+    Creates a dataset object that generates a sliding window instance of tiles within a predefined window of dimensions (window_size x window_sixe)
+    '''
     def __init__(self, h5_path, window_size = 10, stride = 1):
         with h5py.File(h5_path, 'r') as f:
             self.coords = f['coords'][:]
@@ -660,26 +543,4 @@ class SlidingWindow(Dataset):
         data['features'] = features_w
         data['coords'] = coords_w
         return data
-
-
-
-    
-if __name__ == "__main__":
-    df, test_tiles, feat_dim, multitasks = load_dataset('tme')
-
-    def get_source(row): 
-        if os.path.basename(row['file_path']).startswith('UR-PDL1'):
-            return 'SUNY'
-        elif os.path.basename(row['file_path']).startswith('TCGA'):
-            return 'TCGA'
-        elif os.path.basename(row['file_path']).startswith('C3'):
-            return 'CPTAC'
-
-    df['source'] = df.apply(lambda row: get_source(row), axis=1)
-    print(df)
-    print(df['source'].value_counts())
-    print(len(pd.unique(df[df['source']=='CPTAC']['ID'])))
-    print(len(pd.unique(df[df['source']=='TCGA']['ID'])))
-
-
 
