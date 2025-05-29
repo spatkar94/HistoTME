@@ -4,12 +4,9 @@ HistoTME
 
 
 ## Overview 
-The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME molecular signatures from histopathology slides, utilizing foundation model embeddings as input. To extract foundation model embeddings, see [data_preprocessing](data_preprocessing)
+HistoTME is a weakly supervised deep learning framework designed to predict cell type and pathway specific transcriptomic signature activity directly from whole slide H&E images, utilizing foundation model-extracted feature representations. The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME signature activity from histopathology slides. To extract foundation model embeddings, see [data_preprocessing](data_preprocessing). The code in the folder HistoTME_downstream provides examples of how HistoTME signature predictions can be utilized for unsupervised clustering analyses and stratification of cancer patients responses to immunotherapy. The original HistoTME paper is available [here](https://www.nature.com/articles/s41698-024-00765-w).
 
-The code in the folder HistoTME_downstream is an example of how HistoTME signature predictions can be utilized for unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. 
-
-The original HistoTME paper is available [here](https://www.nature.com/articles/s41698-024-00765-w).
-### Introducing HistoTMEv2, a pan-cancer extension of HistoTME:
+## Introducing HistoTMEv2, a pan-cancer extension of HistoTME:
 HistoTMEv2 has been trained and tested on 25 different cancer types. See our new preprint [here]()
 
 ## Installation and prerequisites
