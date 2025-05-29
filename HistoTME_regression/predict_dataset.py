@@ -88,17 +88,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--embeddings_folder", type=str, help="path to embeddings")
     parser.add_argument("--cohort", type=str, help="Cohort name")
+    parser.add_argument("--cancer_type", type=str, help="Cancer type name")
     parser.add_argument("--num_workers", default=8, type=int)
     parser.add_argument("--embed", default='gigapath', type=str)
     args_namespace = parser.parse_args()
     args = vars(args_namespace)
 
-    if args['task'] is None or args['cohort'] is None:
-        print('Please include a task type and cohort. For example -> --task=singletask --cohort=CPTAC')
+    if args['cohort'] is None:
+        print('Please include a cohort name. For example ->  --cohort=CPTAC')
         exit()
 
     cohort = args['cohort']
     embed = args['embed']
+    cancer_type = args['cancer_type']
 
     datasets = ['antitumor', 'protumor', 'cancer', 'angio']
     models = ['abmil_antitumor_huber', 'abmil_protumor_huber', 'abmil_cancer_huber', 'abmil_angio_huber']
@@ -124,6 +126,6 @@ if __name__ == "__main__":
     if not os.path.exists('predictions'):
         os.mkdir('predictions/')
 
-    df_new.to_csv(f'predictions/{cohort}_predictions_{embed}.csv', index=False)
+    df_new.to_csv(f'predictions/{cohort}_{cancer_type}_predictions_{embed}.csv', index=False)
 
 
