@@ -18,7 +18,7 @@ Note: the preprocessing script makes use of NVIDIAs cuCIM image processing libra
 
 ## How to use
 ### Data Preparation
-#### TCGA and CPTAC data
+#### Whole slide imaging data
 The TCGA and CPTAC whole slide imaging and tanscriptomic data can be found online from [GDC](https://portal.gdc.cancer.gov/), [TCIA](https://wiki.cancerimagingarchive.net/display/Public/CPTAC+Imaging+Proteomics) data portals. The downloaded whole slide images should be stored in a single directory as shown below:
 ```bash
 ├── WSI_Directory
@@ -31,33 +31,31 @@ The TCGA and CPTAC whole slide imaging and tanscriptomic data can be found onlin
 
 ```
 After downloading the WSI, utilize the scripts provided in the [data_preprocessing](data_preprocessing) folder to tesselate each WSI into non-overlapping tiles and extract foundation model embeddings. 
-Note: Our latest model HistoTMEv2 tesselates WSI at 256x256 pixel, 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods.
+Note: Our latest model tesselates WSI at 256x256 pixel, 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods.
 The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model-generated feature embeddings.
 ```
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
-
-To calculate ground truth activity of TME signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
+#### ground truth transcriptomics signature data
+To calculate ground truth activity of TME-associated signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
 
 #### Format Preparation
-The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See [HistoTME_regression/sample_data.csv](HistoTME_regression/sample_data.csv) for an example. 
+The extracted features should be in h5py file format to be read. The ground truth transcriptomic signatures should be saved in a csv file format. See [example_data/tcga_transcriptomic_signatures.csv](example_data/tcga_transcriptomic_signatures.csv) for an example. 
 
 ### Training
-Training can be run for multi-task or single-task AB-MIL using:
+we provided updated scripts for training HistoTMEv2 in a pan-cancer 5-fold cross-validation fashion:
 ```
 cd HistoTME_regression/
-./run_multitask.sh
-./run_single_tasks.sh
+./run_training.sh
 ```
 
-### Prediction
-Predictions using multitask or singletask AB-MIL can be run on the CPTAC or TCGA cohort using:
+### Inference
+We have provided updated scripts for running inference using HistoTMEv2, our pan cancer model. HistoTMEv2 can be run in two modes: bulk and spatial. Bulk mode generates signature scores for the whole slide image or patient. Whereas spatial mode generates tile-level scores
+
+For bulk mode run the following
 ```
 cd HistoTME_regression/
-python predict_CPTAC_TCGA.py --task=multitask --cohort=CPTAC
-python predict_CPTAC_TCGA.py --task=singletask --cohort=CPTAC
-python predict_CPTAC_TCGA.py --task=multitask --cohort=TCGA
-python predict_CPTAC_TCGA.py --task=singletask --cohort=TCGA
+python predict_bulk.py 
 ```
 
 ### Attention Interpretability
