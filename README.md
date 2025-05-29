@@ -4,23 +4,25 @@ HistoTME
 
 
 ## Overview 
-The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME molecular signatures from histopathology slides. In order to run experiments on the histopathology datasets, please download the features extracted by the UNI foundation model for the TCGA and CPTAC H&E whole slide images (WSI).
+The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME molecular signatures from histopathology slides. HistoTME utilizes foundation model embeddings as input. To extract foundation model embeddings, see [data_preprocessing](data_preprocessing)
 
-The code in the folder HistoTME_downstream can be used to run downstream unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. Prior to running these experiments, features must be extracted from the WSIs.
+The code in the folder HistoTME_downstream is an example of how HistoTME signature predictions can be utilized for unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. 
 
-Manuscript preprint available [here](https://www.medrxiv.org/content/10.1101/2024.06.11.24308696v1).
+The original HistoTME paper is available [here](https://www.nature.com/articles/s41698-024-00765-w).
+### Introducing HistoTMEv2, a pan-cancer extension of HistoTME:
+HistoTMEv2 has been trained and tested on 25 different cancer types. See our new preprint [here]()
 
 ## Installation and prerequisites
 Tested with Python 3.9. Install requirements using:
 ```
 pip install -r requirements.txt
 ```
-Note: the preprocessing script makes use of ink marking removal codes from the following [repository](https://github.com/lucasrla/wsi-tile-cleanup).
+Note: the preprocessing script makes use of NVIDIAs cuCIM image processing library. To install cuCIM, see instructions [here](https://github.com/rapidsai/cucim).
 
 ## How to use
 ### Data Preparation
 #### TCGA and CPTAC data
-The TCGA and CPTAC whole slide imaging data can be found online from [GDC](https://portal.gdc.cancer.gov/), [TCIA](https://wiki.cancerimagingarchive.net/display/Public/CPTAC+Imaging+Proteomics) data portals. The downloaded whole slide images should be stored in a single directory as shown below:
+The TCGA and CPTAC whole slide imaging and tanscriptomic data can be found online from [GDC](https://portal.gdc.cancer.gov/), [TCIA](https://wiki.cancerimagingarchive.net/display/Public/CPTAC+Imaging+Proteomics) data portals. The downloaded whole slide images should be stored in a single directory as shown below:
 ```bash
 ├── WSI_Directory
 │   ├── slide_1.svs
@@ -31,7 +33,7 @@ The TCGA and CPTAC whole slide imaging data can be found online from [GDC](https
 │   ├── slide_N.svs
 
 ```
-After downloading the WSI run the following WSI preprocessing script to tesselate each whole slide image into a collection of non-overlapping 512x512 pixel tiles scanned at 20x magnification and extract features using [UNI](https://huggingface.co/MahmoodLab/UNI), a pre-trained foundation model:
+After downloading the WSI run the following WSI preprocessing script to tesselate each whole slide image into a collection of non-overlapping tiles and extract features using a pre-trained foundation model:
 ```
 cd data_preprocessing/
 ./run_UNI.sh
@@ -41,7 +43,7 @@ The extracted features will be saved in a h5py file with each entry correspondin
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
 
-To calculate expression of TME signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
+To calculate ground truth activity of TME signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
 
 #### Format Preparation
 The extracted features should be in h5py file format to be read. A csv containing both TCGA and CPTAC cohorts should then be made with the transcriptomic-derived TME signatures and a file path to the extracted features. See [HistoTME_regression/sample_data.csv](HistoTME_regression/sample_data.csv) for an example. 
