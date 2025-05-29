@@ -6,7 +6,7 @@ from torch.nn import Parameter, Sequential, Linear, BatchNorm1d
 
 class ABMIL(nn.Module):
     """
-    Attention-based MIL classification.
+    Attention-based MIL model.
     Embeddings followed by linear layer.
     """
     def __init__(self, feat_dim, output_dim):
@@ -61,7 +61,7 @@ class ABMIL(nn.Module):
 
 class multitask_ABMIL(ABMIL):
     '''
-    Multitask classification
+    Multitask ABMIL
     '''
     def __init__(self, task_dict, feat_dim, output_dim , mask_drop=0.5, n_masked_patch=25):
         super(multitask_ABMIL, self).__init__(feat_dim, output_dim)
@@ -103,7 +103,7 @@ class multitask_ABMIL(ABMIL):
 
 class ABMIL_attention_map(multitask_ABMIL):
     '''
-    Used for making attention maps for multitask classification
+    Used for making attention maps
     (No softmax on attention)
     '''
     def __init__(self, task_dict, feat_dim, output_dim):
