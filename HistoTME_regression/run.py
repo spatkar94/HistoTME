@@ -12,7 +12,7 @@ from tqdm import tqdm
 from data import *
 from utils import EarlyStopper
 
-device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
+
 
 def set_seed(seed):
 	"""
@@ -38,7 +38,9 @@ class Options:
         self.parser.add_argument("--num_workers", dest="num_workers", action="store", default=8, type=int)
         self.parser.add_argument("--bag_size", dest="bag_size", action="store", default=-1, type=int)
         self.parser.add_argument("--dataset", dest="dataset", action="store", type=str, default='tme')
-        self.parser.add_argument("--embed", dest="embed", action="store", default='uni', type=str)
+        self.parser.add_argument("--embed", dest="embed", action="store", default='virchow', type=str)
+        self.parser.add_argument("--embeddings_folder", dest="embeddings_folder", action="store", default='/mnt/synology/Virchow_Pan_TCGA', type=str)
+        self.parser.add_argument("--device", dest="device", action="store", default='cuda:0', type=str)
         self.parse()
         #self.check_args()
 
@@ -48,7 +50,11 @@ class Options:
         return ("All Options:\n" + "".join(["-"] * 45) + "\n" + "\n".join(["{:<18} -------> {}".format(k, v) for k, v in vars(self.opts).items()]) + "\n" + "".join(["-"] * 45) + "\n")
     
 
-def run(args, epoch, mode, dataloader, model, optimizer, multitask_list):
+def run(args, fold, epoch, mode, dataloader, model, optimizer, multitask_list):
+    ''' 
+    function to run one epoch of train/validation
+    '''
+    device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     if mode == "train":
         model.train()
     elif mode == "val" or mode == "test":
@@ -58,42 +64,40 @@ def run(args, epoch, mode, dataloader, model, optimizer, multitask_list):
     model_name = model.__class__.__name__.lower()
 
     accum_iter = 8 # batch accumulation parameter
-
-    n_token = 5
+    print(f"backprop occurs every {accum_iter} iterations...")
 
     loss_fn = torch.nn.HuberLoss()
-    #loss_fn = torch.nn.MSELoss()
 
     losses = []
-    correct = 0
-    count = {'SUNY_correct':0, 'TCGA_correct':0, 
-                'SUNY_total':0, 'TCGA_total':0}
 
     multitask_preds = {}
     multitask_truth = {}
     for key in multitask_list:    
         multitask_preds[key] = []
         multitask_truth[key] = []
-    counter=0
 
     with trange(len(dataloader), desc="{}, Epoch {}: ".format(mode, epoch)) as t:
         for data_it, data in enumerate(dataloader):
             features = data['features'].to(device)
+            
             loss_dict = {}
-
-            if model_name == 'multitask_abmil': 
-                attn, multitask_slide_preds= model(features)
-
+            #print(model_name)
+            if model_name == 'multitask_abmil':
+                if mode == 'train': 
+                    attn, multitask_slide_preds= model(features.type(torch.float32), training=True)
+                else:
+                    attn, multitask_slide_preds= model(features.type(torch.float32), training=False)
+                
                 for key in data['multitask_labels'].keys():
-                    multitask_label = data['multitask_labels'][key].float().to(device)
-                    multitask_pred = multitask_slide_preds[key].squeeze(dim=2)
+                    task_label = data['multitask_labels'][key].float().to(device)
+                    task_pred = multitask_slide_preds[key].squeeze(dim=2)
 
-                    multitask_loss = loss_fn(multitask_pred, multitask_label)
+                    task_loss = loss_fn(task_pred, task_label)
 
-                    loss_dict[key] = multitask_loss.reshape(1)
+                    loss_dict[key] = task_loss.reshape(1)
                     
-                    multitask_preds[key].append(multitask_pred.detach().cpu().numpy())
-                    multitask_truth[key].append(multitask_label.detach().cpu().numpy())
+                    multitask_preds[key].append(task_pred.detach().cpu().numpy())
+                    multitask_truth[key].append(task_label.detach().cpu().numpy())
                     
                     
             loss = torch.cat(list(loss_dict.values())).mean()
@@ -110,7 +114,7 @@ def run(args, epoch, mode, dataloader, model, optimizer, multitask_list):
 
     epoch_loss = sum(losses) / len(losses)
 
-    train_file = open(f"logs/{args.embed}/{args.save}/training_log.txt","a")
+    train_file = open(f"logs/{fold}/{args.embed}/{args.save}/training_log.txt","a")
     train_file.write(f"##### Epoch {epoch} {mode.upper()} #####\n")
 
     rmse_list = []
@@ -134,71 +138,85 @@ def run(args, epoch, mode, dataloader, model, optimizer, multitask_list):
 
     return epoch_loss, accuracy
 
+
 def main(args):
-    train_dataset, val_dataset, test_dataset, feat_dim, multitask_list = load_dataset(args.dataset, args.embed)
-    test_dataset=pd.DataFrame()
-    task_counts = {}
-    for task in multitask_list:
-        task_counts[task] = 1
+    '''
+    wrapper function to execute 5-fold cross validation training 
+    '''
+    train_val_splits, feat_dim, multitask_list = load_data_tcga(ctypes='all', signatures=args.dataset,embeddings_folder=args.embeddings_folder)
+    device = torch.device(args.device if torch.cuda.is_available() else "cpu")
+    for fold in train_val_splits.keys():
+        print(f'Running fold: {fold}')
+        print(f'Running for {args.embed}')
+        train_dataset = train_val_splits[fold]['train']
+        val_dataset = train_val_splits[fold]['val']
 
-    logRoot = f"logs/{args.embed}/{args.save}/"
-    runRoot = f"runs/{args.embed}/{args.save}/"
-    if not os.path.exists(logRoot):
-        os.makedirs(logRoot)
-        os.makedirs(runRoot)
+        print(train_dataset['type'].value_counts())
+        print(val_dataset['type'].value_counts())
+        task_counts = {}
+        for task in multitask_list:
+            task_counts[task] = 1
 
-    bag_size=None if args.bag_size==-1 else args.bag_size
+        logRoot = f"logs/{fold}/{args.embed}/{args.save}"
+        runRoot = f"runs/{fold}/{args.embed}/{args.save}"
+        if not os.path.exists(logRoot):
+            os.makedirs(logRoot)
+            os.makedirs(runRoot)
 
-    train_loader = build_mil_loader(args, train_dataset, "train", bag_size, task_counts)
-    if not val_dataset.empty:
+        bag_size=None if args.bag_size==-1 else args.bag_size
+
+        train_loader = build_mil_loader(args, train_dataset, "train", bag_size, task_counts)
         val_loader = build_mil_loader(args, val_dataset, "val", bag_size, task_counts)
-    else:
-        test_loader = build_mil_loader(args, test_dataset, "test", None, task_counts)
-    
-    print("Dataset Split: {}".format(len(train_dataset)))
-    print("Number of tasks: {}".format(len(multitask_list)))
-
-    model = multitask_ABMIL(task_counts, feat_dim, 1)
-    model = model.to(device)
-
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.999), weight_decay=1e-4)
-
-    best_train_loss, best_val_loss = float("inf"), float("inf")
-
-    logger = SummaryWriter(logdir = runRoot)
-    
-    #reset training log
-    train_log = os.path.join(logRoot, 'training_log.txt')
-    open(train_log,"w").close()
-
-    best_valid_epoch = 0
-    early_stopper = EarlyStopper(patience=10, min_delta=0)
-    for epoch in range(args.epochs):
-        train_loss, train_acc = run(args, epoch, "train", train_loader, model, optimizer, multitask_list)
-        print("Train Epoch Loss: {}, RMSE: {}".format(train_loss, train_acc))
-        logger.add_scalar("Train Loss", train_loss, epoch)
-
-        val_loss, val_acc = run(args, epoch, "val", val_loader, model, optimizer, multitask_list)
-        print("Val Epoch Loss: {}, RMSE: {}".format(val_loss,val_acc))
-        print(" ")
-        logger.add_scalar("Val Loss", val_loss, epoch)
-
-        is_best_loss = False
-        if val_loss < best_val_loss:
-            best_epoch, best_train_loss, best_val_loss, is_best_loss = epoch, train_loss, val_loss, True
-            best_valid_epoch = epoch
         
-        model.save_checkpoint(logRoot, optimizer, epoch, best_train_loss, best_val_loss, is_best_loss)
+        print("Dataset Split: {}".format(len(train_dataset)))
+        print("Number of tasks: {}".format(len(multitask_list)))
+        print("Feature dim: {}".format(feat_dim))
 
-        if early_stopper.early_stop(val_loss):
-            print("#### Early stopped...")
-            break
+        model = multitask_ABMIL(task_counts, feat_dim, 1,n_masked_patch=0)
+        model = model.to(device)
 
-    with open(train_log, 'a') as f:
-        f.write(f"\nEpoch for best validation loss : {best_valid_epoch} \n"), print(f"\nEpoch for best validation loss : {best_valid_epoch}")
-        f.write("Train Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_train_loss)), print("Train Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_train_loss))
-        f.write("\nVal Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_val_loss)), print("Val Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_val_loss))
-        f.write("")
+        optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.999), weight_decay=1e-4)
+
+        best_train_loss, best_val_loss = float("inf"), float("inf")
+
+        logger = SummaryWriter(logdir = runRoot)
+        
+        #reset training log
+        train_log = os.path.join(logRoot, 'training_log.txt')
+        open(train_log,"w").close()
+
+        best_valid_epoch = 0
+        early_stopper = EarlyStopper(patience=3, min_delta=0)
+        for epoch in range(args.epochs):
+            train_loss, train_acc = run(args, fold, epoch, "train", train_loader, model, optimizer, multitask_list)
+            print("Train Epoch Loss: {}, RMSE: {}".format(train_loss, train_acc))
+            logger.add_scalar("Train Loss", train_loss, epoch)
+
+            val_loss, val_acc = run(args, fold, epoch, "val", val_loader, model, optimizer, multitask_list)
+            print("Val Epoch Loss: {}, RMSE: {}".format(val_loss,val_acc))
+            print(" ")
+            logger.add_scalar("Val Loss", val_loss, epoch)
+
+            is_best_loss = False
+            if val_loss < best_val_loss:
+                best_epoch, best_train_loss, best_val_loss, is_best_loss = epoch, train_loss, val_loss, True
+                best_valid_epoch = epoch
+            
+            model.save_checkpoint(logRoot, optimizer, epoch, best_train_loss, best_val_loss, is_best_loss)
+
+            if early_stopper.early_stop(val_loss):
+                print("#### Early stopped...")
+                break
+
+        with open(train_log, 'a') as f:
+            f.write(f"\nEpoch for best validation loss : {best_valid_epoch} \n"), print(f"\nEpoch for best validation loss : {best_valid_epoch}")
+            f.write("Train Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_train_loss)), print("Train Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_train_loss))
+            f.write("\nVal Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_val_loss)), print("Val Loss at epoch {} (best model): {:.3f}".format(best_epoch, best_val_loss))
+            f.write("")
+
+
+    
+
 
 if __name__ == "__main__":
     set_seed(1)
