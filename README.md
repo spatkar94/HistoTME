@@ -4,7 +4,7 @@ HistoTME
 
 
 ## Overview 
-The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME molecular signatures from histopathology slides. HistoTME utilizes foundation model embeddings as input. To extract foundation model embeddings, see [data_preprocessing](data_preprocessing)
+The code in the folder HistoTME_regression can be used to run attention-based multiple instance learning (AB-MIL) to predict TME molecular signatures from histopathology slides, utilizing foundation model embeddings as input. To extract foundation model embeddings, see [data_preprocessing](data_preprocessing)
 
 The code in the folder HistoTME_downstream is an example of how HistoTME signature predictions can be utilized for unsupervised clustering analyses and prediction of immune checkpoint inhibitor response in NSCLC patients. 
 
