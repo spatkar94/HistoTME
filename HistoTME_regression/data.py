@@ -18,8 +18,8 @@ def load_data_tcga(ctypes, signatures, embeddings_folder, n_splits = 5):
     import glob
     from sklearn.model_selection import train_test_split
     tcga_dataset = pd.DataFrame({})
-    tme_signatures = pd.read_csv('/mnt/synology/ICB_Data_SUNY/pantcga_tme_signatures.csv')
-    tcga_clindata = pd.read_excel('/mnt/synology/ICB_Data_SUNY/TCGA-CDR-SupplementalTableS1.xlsx',index_col=0)
+    tme_signatures = pd.read_csv('../example_data/pantcga_tme_signatures.csv')
+    tcga_clindata = pd.read_excel('../example_data/TCGA-CDR-SupplementalTableS1.xlsx',index_col=0)
     tme_signatures.rename(columns={'Unnamed: 0':'bcr_patient_barcode'}, inplace=True)
     embedding_paths = []
 
