@@ -106,7 +106,7 @@ if __name__ == "__main__":
     args = vars(args_namespace)
 
     if args['cohort'] is None:
-        print('Please include a task type and cohort. For example -> --task=singletask --cohort=CPTAC')
+        print('Please include a cohort name. For example -> --cohort=CPTAC')
         exit()
 
     cohort = args['cohort']
