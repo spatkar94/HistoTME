@@ -55,13 +55,15 @@ We have provided updated scripts for running inference using HistoTMEv2, our pan
 For bulk mode run the following
 ```
 cd HistoTME_regression/
-python predict_bulk.py 
+python predict_bulk.py [-h] [--h5_path H5_PATH] [--cohort COHORT] [--cancer_type CANCER_TYPE]
+                       [--num_workers NUM_WORKERS] [--embed EMBED]
 ```
 
 For spatial mode run the following
 ```
 cd HistoTME_regression/
-python predict_spatial.py 
+python predict_spatial.py [-h] [--h5_path H5_PATH] [--num_workers NUM_WORKERS] [--embed EMBED]
+                          [--save_loc SAVE_LOC] 
 ```
 
 ## Model weights
