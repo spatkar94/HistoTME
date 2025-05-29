@@ -55,7 +55,7 @@ We have provided updated scripts for running inference using HistoTMEv2, our pan
 For bulk mode run the following
 ```
 cd HistoTME_regression/
-python predict_bulk.py [-h] [--h5_path H5_PATH] [--cohort COHORT] [--cancer_type CANCER_TYPE]
+python predict_bulk.py [-h] [--h5_folder H5_FOLDER] [--cohort COHORT] [--cancer_type CANCER_TYPE]
                        [--num_workers NUM_WORKERS] [--embed EMBED]
 ```
 
