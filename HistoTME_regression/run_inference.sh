@@ -5,7 +5,7 @@ python predict_dataset.py --embeddings_folder /mnt/synology/ICB_Data_SUNY/Vircho
 python predict_dataset.py --embeddings_folder /mnt/synology/ICB_Data_SUNY/Virchow2_resection_256_embeddings --cohort SUNY --cancer_type NSCLC --embed virchow2
 python predict_dataset.py --embeddings_folder /mnt/synology/ICB_Data_SUNY/Gigapath_resection_256_embeddings --cohort SUNY --cancer_type NSCLC --embed gigapath
 python predict_dataset.py --embeddings_folder /mnt/synology/ICB_Data_SUNY/Hoptimus0_resection_256_embeddings --cohort SUNY --cancer_type NSCLC --embed hoptimus0
-python gen_ensemble_predictions --cohort SUNY --cancer_type NSCLC
+python gen_ensemble_predictions.py --cohort SUNY --cancer_type NSCLC
 
 
 
