@@ -36,20 +36,20 @@ The extracted features will be saved in a h5py file with each entry correspondin
 ```
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
-#### ground truth transcriptomics signature data
+#### Transcriptomics signatures data
 To calculate ground truth activity of TME-associated signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
 
-#### Format Preparation
+### Format Preparation
 The extracted features should be in h5py file format to be read. The ground truth transcriptomic signatures should be saved in a csv file format. See [example_data](example_data) for an example. 
 
-### Training
+## Training
 we provided updated scripts for training HistoTMEv2 in a pan-cancer 5-fold cross-validation fashion:
 ```
 cd HistoTME_regression/
 ./run_training.sh
 ```
 
-### Inference
+## Inference
 We have provided updated scripts for running inference using HistoTMEv2, our pan cancer model. HistoTMEv2 can be run in two modes: bulk and spatial. Bulk mode generates signature scores for the whole slide image or patient. Whereas spatial mode generates tile-level scores
 
 For bulk mode run the following
