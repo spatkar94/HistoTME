@@ -7,9 +7,9 @@ from tqdm import trange
 from scipy.stats import pearsonr
 from tensorboardX import SummaryWriter
 
-from src.model import *
-from src.data import *
-from src.utils import EarlyStopper
+from model import *
+from data import *
+from utils import EarlyStopper
 from tqdm import tqdm
 
 

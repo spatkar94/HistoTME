@@ -7,9 +7,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import trange
 from run import set_seed
-from src.data import *
-from src.model import *
-from src.utils import *
+from data import *
+from model import *
+from utils import *
 from scipy.stats import pearsonr
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
