@@ -6,7 +6,7 @@ HistoTME
 ## Overview 
 HistoTME is a weakly supervised deep learning framework designed to infer cell type and pathway specific transcriptomic signature activity directly from whole slide H&E images, utilizing digital pathology foundation model feature embeddings. The code in the folder HistoTME_regression can be used to train HistoTME to predict TME signature activity from histopathology slides. To extract foundation model embeddings, see [data_preprocessing](data_preprocessing). The code in the folder HistoTME_downstream provides examples of how HistoTME signature predictions can be utilized for unsupervised clustering analyses and stratification of cancer patients responses to immunotherapy. The original HistoTME paper is available [here](https://www.nature.com/articles/s41698-024-00765-w).
 
-## Introducing HistoTMEv2, a pan-cancer extension of HistoTME:
+## Introducing HistoTMEv2:
 HistoTMEv2 has been trained and tested on 25 different cancer types. See our new preprint [here]()
 
 ## Installation and prerequisites
