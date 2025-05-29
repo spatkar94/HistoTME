@@ -47,7 +47,7 @@ def predict(epoch, mode, dataloader, model):
 
 def main(args):
     test_dataset, feat_dim, multitask_list = load_data(signatures=args['dataset'],
-                                                             embeddings_folder=args['embeddings_folder'],
+                                                             embeddings_folder=args['h5_folder'],
                                                              cancer_type=args['cancer_type'])
     
     load_model = args['load']
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     set_seed(1)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--embeddings_folder", type=str, help="path to embeddings")
+    parser.add_argument("--h5_folder", type=str, help="Path to directory containing h5py files")
     parser.add_argument("--cohort", type=str, help="Cohort name")
     parser.add_argument("--cancer_type", type=str, help="Cancer type name")
     parser.add_argument("--num_workers", default=8, type=int)
