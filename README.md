@@ -52,21 +52,59 @@ cd HistoTME_regression/
 ```
 
 ## Inference
-We have provided updated scripts for running inference using HistoTME. Our latest model can now be run in two modes: bulk and spatial. Bulk mode generates signature scores for the whole slide or patient. Whereas spatial mode generates tile-level scores
+We have provided updated scripts for running inference. Our latest model can now be run in two modes: bulk and spatial. Bulk mode generates enrichment scores for the whole slide or patient. Whereas spatial mode generates tile-level enrichment scores.
 
-For bulk mode run the following. This code operates on an entire cohort
+![](HistoTME_regression/inference_modes_figure.png)
+
+After generating tile embeddings with a foundation model you can run the following script to generate bulk signature predictions for a cohort of WSIs
 ```
 cd HistoTME_regression/
-python predict_bulk.py [-h] [--h5_folder H5_FOLDER] [--cohort COHORT] [--cancer_type CANCER_TYPE]
-                       [--num_workers NUM_WORKERS] [--embed EMBED]
+python predict_bulk.py [-h] [--h5_folder H5_FOLDER] [--chkpts_dir CHKPTS_DIR] [--cohort COHORT]
+                       [--save_loc SAVE_LOC] [--num_workers NUM_WORKERS] [--embed EMBED]
+
+options:
+  -h, --help            show this help message and exit
+  --h5_folder H5_FOLDER
+                        Path to directory containing h5py files
+  --chkpts_dir CHKPTS_DIR
+                        path to directory where pretrained model checkpoints are saved
+  --cohort COHORT       Cohort name
+  --save_loc SAVE_LOC   path to where predictions should be saved
+  --num_workers NUM_WORKERS
+  --embed EMBED         name of foundation model used: [uni, uni2, virchow, virchow2, gigapath, hoptimus0]
 ```
 
-For spatial mode run the following. This code operates on a single whole slide H&E image
+Alternatively you can also generate spatial resoloved predictions of signatures for a single WSI using the following python script
 ```
 cd HistoTME_regression/
-python predict_spatial.py [-h] [--h5_path H5_PATH] [--num_workers NUM_WORKERS] [--embed EMBED]
-                          [--save_loc SAVE_LOC] 
+python predict_spatial.py [-h] [--h5_path H5_PATH] [--chkpts_dir CHKPTS_DIR] [--num_workers NUM_WORKERS]
+                          [--embed EMBED] [--save_loc SAVE_LOC]
+
+options:
+  -h, --help            show this help message and exit
+  --h5_path H5_PATH     WSI patch embeddings path for prediction
+  --chkpts_dir CHKPTS_DIR
+                        path to directory where pretrained model checkpoints are saved
+  --num_workers NUM_WORKERS
+  --embed EMBED         name of foundation model used: [uni, uni2, virchow, virchow2, gigapath, hoptimus0]
+  --save_loc SAVE_LOC
+
 ```
+### Combining signature predictions generated from multiple foundation models
+Our cross-validation results indicate that combining signature predictions generated from several foundation models yeilds the most robust results. To generate ensemble predictions, run the following scripts below. Note: Remember to update the paths to where each foundation model's embeddings are stored prior to running the bash scripts.
+
+For bulk predictions:
+```
+cd HistoTME_regression/
+./run_bulk_ensemble.sh
+```
+
+For spatial predictions:
+```
+cd HistoTME_regression/
+./run_spatial_ensemble.sh
+```
+
 
 ## Model weights
 For inquiries about HistoTME model weights please contact the corresponding authors directly.  The codes are intended to be used for research purposes only. Please see the [license](LICENSE)
