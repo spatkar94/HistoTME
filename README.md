@@ -8,6 +8,8 @@ HistoTME is a weakly supervised deep learning framework designed to infer cell t
 
 ## Introducing HistoTMEv2:
 HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 different cancer types. See our new preprint [here]()
+
+
 ![](HistoTME_regression/pancancer_figure.png)
 
 ## Installation and prerequisites
