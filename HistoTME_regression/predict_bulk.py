@@ -46,9 +46,9 @@ def predict(epoch, mode, dataloader, model):
     return df
 
 def main(args):
-    test_dataset, feat_dim, multitask_list = load_data(signatures=args['dataset'],
+    test_dataset, feat_dim, multitask_list = load_data(signature_group=args['dataset'],
                                                              embeddings_folder=args['h5_folder'],
-                                                             cancer_type=args['cancer_type'])
+                                                             cancer_type=args['cohort'])
     
     load_model = args['load']
 
@@ -70,7 +70,7 @@ def main(args):
 
         optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, betas=(0.9, 0.999), weight_decay=1e-4)
 
-        best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", str(fold), args['embed'],load_model), optimizer)
+        best_epoch, _, _ = model.load_checkpoint(os.path.join(args["chkpts_dir"], str(fold), args['embed'],load_model), optimizer)
         
         df = predict(best_epoch, "test", loader, model)
         ids = df['ID'].values
@@ -87,10 +87,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--h5_folder", type=str, help="Path to directory containing h5py files")
+    parser.add_argument("--chkpts_dir", type=str, help="path to directory where pretrained model checkpoints are saved", default="logs")
     parser.add_argument("--cohort", type=str, help="Cohort name")
-    parser.add_argument("--cancer_type", type=str, help="Cancer type name")
+    parser.add_argument("--save_loc",type=str, default="predictions",help="path to where predictions should be saved")
     parser.add_argument("--num_workers", default=8, type=int)
-    parser.add_argument("--embed", default='gigapath', type=str)
+    parser.add_argument("--embed", default='virchow', type=str, help='name of foundation model used: [uni, uni2, virchow, virchow2, gigapath, hoptimus0]')
     args_namespace = parser.parse_args()
     args = vars(args_namespace)
 
@@ -100,7 +101,6 @@ if __name__ == "__main__":
 
     cohort = args['cohort']
     embed = args['embed']
-    cancer_type = args['cancer_type']
 
     datasets = ['antitumor', 'protumor', 'cancer', 'angio']
     models = ['abmil_antitumor_huber', 'abmil_protumor_huber', 'abmil_cancer_huber', 'abmil_angio_huber']
@@ -123,9 +123,9 @@ if __name__ == "__main__":
     
 
     #save results to csv file
-    if not os.path.exists('predictions'):
-        os.mkdir('predictions/')
+    if not os.path.exists(args['save_loc']):
+        os.mkdirs(args['save_loc'])
 
-    df_new.to_csv(f'predictions/{cohort}_{cancer_type}_predictions_{embed}.csv', index=False)
+    df_new.to_csv(f'{args["save_loc"]}/{cohort}_predictions_{embed}.csv', index=False)
 
 

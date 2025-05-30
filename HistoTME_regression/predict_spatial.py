@@ -111,7 +111,7 @@ def main(args):
     #print(f"Best Fold: {best_fold}")
     #best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", str(best_fold), args['embed'],load_model), optimizer)
 
-    best_epoch, _, _ = model.load_checkpoint(os.path.join("logs", str(args['fold']), args['embed'],load_model), optimizer)
+    best_epoch, _, _ = model.load_checkpoint(os.path.join(args['chkpts_dir'], str(args['fold']), args['embed'],load_model), optimizer)
 
     return predict(best_epoch, "test", loader, model), np.array(dset.coords), np.array(dset.barcodes) 
 
@@ -121,8 +121,9 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--h5_path", type=str, help="WSI patch embeddings path for prediction")
+    parser.add_argument("--chkpts_dir",type=str, help="path to directory where pretrained model checkpoints are saved", default="logs")
     parser.add_argument("--num_workers", default=8, type=int)
-    parser.add_argument("--embed", default='virchow', type=str)
+    parser.add_argument("--embed", default='virchow', type=str, help='name of foundation model used: [uni, uni2, virchow, virchow2, gigapath, hoptimus0]')
     parser.add_argument("--save_loc", default='/home/air/Shared_Drives/MIP_network/MIP/spatkar/HistoTME/spatial_predictions')
 
     args_namespace = parser.parse_args()
@@ -139,7 +140,7 @@ if __name__ == "__main__":
     # For multitask
     datasets = ['antitumor', 'protumor', 'cancer', 'angio']
     models = ['abmil_antitumor_huber', 'abmil_protumor_huber', 'abmil_cancer_huber', 'abmil_angio_huber']
-    #
+    
     df_folds = []
     for fold in range(5):
         print(f'Fold:{fold}')
