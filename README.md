@@ -32,7 +32,7 @@ The TCGA and CPTAC whole slide imaging and tanscriptomic data can be found onlin
 ```
 After downloading the WSI, utilize the scripts provided in the [data_preprocessing](data_preprocessing) folder to tesselate each WSI into non-overlapping tiles and extract foundation model embeddings. 
 Note: Our latest model tesselates WSI at 256x256 pixel, 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods.
-The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model-generated feature embeddings.
+The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model-generated feature embeddings. Alternatively you can also use [trident](https://github.com/mahmoodlab/trident) to preprocess your WSI (if they are svs images).
 ```
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
