@@ -54,14 +54,14 @@ cd HistoTME_regression/
 ## Inference
 We have provided updated scripts for running inference using HistoTME. Our latest model can now be run in two modes: bulk and spatial. Bulk mode generates signature scores for the whole slide or patient. Whereas spatial mode generates tile-level scores
 
-For bulk mode run the following. This code operates on the entire cohort
+For bulk mode run the following. This code operates on an entire cohort
 ```
 cd HistoTME_regression/
 python predict_bulk.py [-h] [--h5_folder H5_FOLDER] [--cohort COHORT] [--cancer_type CANCER_TYPE]
                        [--num_workers NUM_WORKERS] [--embed EMBED]
 ```
 
-For spatial mode run the following. This code operates on a single H&E image
+For spatial mode run the following. This code operates on a single whole slide H&E image
 ```
 cd HistoTME_regression/
 python predict_spatial.py [-h] [--h5_path H5_PATH] [--num_workers NUM_WORKERS] [--embed EMBED]
