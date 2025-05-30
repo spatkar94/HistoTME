@@ -74,7 +74,7 @@ options:
   --embed EMBED         name of foundation model used: [uni, uni2, virchow, virchow2, gigapath, hoptimus0]
 ```
 
-Alternatively you can also generate spatial resoloved predictions of signatures for a single WSI using the following python script
+Alternatively you can also generate spatially resoloved predictions of signatures for a single WSI using the following python script
 ```
 cd HistoTME_regression/
 python predict_spatial.py [-h] [--h5_path H5_PATH] [--chkpts_dir CHKPTS_DIR] [--num_workers NUM_WORKERS]
