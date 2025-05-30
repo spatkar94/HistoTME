@@ -49,7 +49,7 @@ cd HistoTME_regression/
 ```
 
 ## Inference
-We have provided updated scripts for running inference using HistoTME, our pan cancer model. HistoTMEv2 can be run in two modes: bulk and spatial. Bulk mode generates signature scores for the whole slide image or patient. Whereas spatial mode generates tile-level scores
+We have provided updated scripts for running inference using HistoTME. Our latest model can now be run in two modes: bulk and spatial. Bulk mode generates signature scores for the whole slide or patient. Whereas spatial mode generates tile-level scores
 
 For bulk mode run the following. This code operates on the entire cohort
 ```
