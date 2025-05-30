@@ -105,7 +105,7 @@ cd HistoTME_regression/
 
 
 ## Model weights
-Pretrained model checkpoints are available at [huggingface](spatkar94/HistoTMEv2)  The codes and model weights are intended to be used for research purposes only. Please see the [license](LICENSE)
+Pretrained model checkpoints are available at [huggingface](spatkar94/HistoTMEv2). The codes and model weights are intended to be used for research purposes only. Please see the [license](LICENSE)
 
 ## Questions and Issues
 If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
