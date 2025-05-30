@@ -33,17 +33,18 @@ The TCGA and CPTAC whole slide imaging and tanscriptomic data can be found onlin
 │   ├── slide_N.svs
 
 ```
-After downloading the WSI, utilize the scripts provided in the [data_preprocessing](data_preprocessing) folder to tesselate each WSI into non-overlapping tiles and extract foundation model embeddings. 
-Note: Our latest model tesselates WSI at 256x256 pixel, 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods.
-The extracted features will be saved in a h5py file with each entry corresponding to a tile along with its physical coordinates and the foundation model-generated feature embeddings. Alternatively you can also use [trident](https://github.com/mahmoodlab/trident) to preprocess your WSI (if they are svs images).
+After downloading the WSI, utilize the scripts provided in the [data_preprocessing](data_preprocessing) folder to tesselate each WSI into non-overlapping tiles and extract foundation model embeddings. Alternatively, you can also use [trident](https://github.com/mahmoodlab/trident) to preprocess your WSI (if they are svs images). The embeddings for each WSI are saved as a h5py file along with the coordinates of each tile:
 ```
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
-#### Transcriptomics signatures data
+Note: Our latest model, HistoTMEv2, tesselates each WSI into tiles of size 256x256 pixels, captured at 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods. 
+
+#### Transcriptomics data
 To calculate ground truth activity of TME-associated signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
 
 ### Format Preparation
 The extracted features should be in h5py file format to be read. The ground truth transcriptomic signatures should be saved in a csv file format. See [example_data](example_data).
+
 ## Training
 we provided updated scripts for training HistoTME in a pan-cancer 5-fold cross-validation fashion:
 ```
