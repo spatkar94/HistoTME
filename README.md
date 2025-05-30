@@ -40,19 +40,16 @@ dict{'coords': (x,y), 'features': <embeddings>}
 Note: Our latest model, HistoTMEv2, tesselates each WSI into tiles of size 256x256 pixels, captured at 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods. 
 
 #### Transcriptomics data
-To calculate ground truth activity of TME-associated signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). 
+To calculate ground truth activity of TME-associated signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). The ground truth transcriptomic signatures should be saved in a csv file format. See [example_data](example_data).
 
-### Format Preparation
-The extracted features should be in h5py file format to be read. The ground truth transcriptomic signatures should be saved in a csv file format. See [example_data](example_data).
-
-## Training
+### Training
 we provided updated scripts for training HistoTME in a pan-cancer 5-fold cross-validation fashion:
 ```
 cd HistoTME_regression/
 ./run_training.sh
 ```
 
-## Inference
+### Inference
 We have provided updated scripts for running inference. Our latest model can now be run in two modes: bulk and spatial. Bulk mode generates enrichment scores for the whole slide or patient. Whereas spatial mode generates tile-level enrichment scores.
 
 ![](HistoTME_regression/inference_modes_figure.png)
