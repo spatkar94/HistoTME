@@ -1,6 +1,6 @@
 HistoTME
 ==============
-![](HistoTME_regression/HistoTME_outline.png)
+![](figures/HistoTME_outline.png)
 
 
 ## Overview 
@@ -12,7 +12,7 @@ The `HistoTME_regression` module contains code to train models for predicting th
 HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 different cancer types. See our new preprint [here]()
 
 
-![](HistoTME_regression/pancancer_figure.png)
+![](figures/pancancer_figure.png)
 
 ## Installation and prerequisites
 Tested with Python 3.9. Install requirements using:
@@ -54,7 +54,7 @@ cd HistoTME_regression/
 ### Inference
 We have provided updated scripts for running inference. Our latest model can now be run in two modes: bulk and spatial. Bulk mode generates enrichment scores for the whole slide or patient. Whereas spatial mode generates tile-level enrichment scores.
 
-![](HistoTME_regression/inference_modes_figure.png)
+![](figures/inference_modes_figure.png)
 
 After generating tile embeddings with a foundation model you can run the following script to generate bulk signature predictions for a cohort of WSIs
 ```
