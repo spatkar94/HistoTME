@@ -4,12 +4,12 @@ HistoTME
 
 
 ## Overview 
-HistoTME is a weakly supervised deep learning framework that infers cell type– and pathway-specific transcriptomic signature activity directly from H&E-stained whole-slide images (WSIs), without requiring single-cell resolution or explicit cell-level annotations. The model leverages feature embeddings from large-scale digital pathology foundation models as input to a multi-task regression architecture trained on matched bulk RNA-seq data. This design enables HistoTME to learn biologically grounded representations of the tumor microenvironment (TME), bridging image-based and transcriptomic modalities.
+HistoTME is a weakly supervised deep learning framework that infers cell type– and pathway-specific transcriptomic signature activity directly from H&E-stained whole-slide images (WSIs), without requiring single-cell resolution or explicit patch-level annotations. The model leverages feature embeddings from large-scale digital pathology foundation models as input to a multi-task regression architecture trained on matched bulk RNA-seq data. This design enables HistoTME to learn biologically grounded representations of the tumor microenvironment (TME), bridging image-based and transcriptomic modalities.
 
 The `HistoTME_regression` module contains code to train models for predicting the activity of 29 curated gene expression signatures from histopathology slides. The `HistoTME_downstream` module demonstrates use cases of these predictions for unsupervised TME profiling and stratification of immunotherapy response, illustrating how transcriptomic signature inference from WSIs can support scalable, annotation-free biomarker discovery. The original HistoTME paper is available [here](https://www.nature.com/articles/s41698-024-00765-w).
 
 ## Introducing HistoTMEv2 :rocket:
-HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 different cancer types. See our new preprint [here]()
+HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 different cancer types. See our new preprint [here](https://www.biorxiv.org/content/10.1101/2025.06.11.658673v1)
 
 
 ![](figures/pancancer_figure.png)
