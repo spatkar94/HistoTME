@@ -89,7 +89,7 @@ python predict_spatial.py [-h] [--h5_path H5_PATH] [--chkpts_dir CHKPTS_DIR] [--
 
 options:
   -h, --help            show this help message and exit
-  --h5_path H5_PATH     WSI patch embeddings path for prediction
+  --h5_path H5_PATH     WSI patch embeddings file path for prediction (single h5py file)
   --chkpts_dir CHKPTS_DIR
                         path to directory where pretrained model checkpoints are saved
   --num_workers NUM_WORKERS
