@@ -11,7 +11,7 @@ setup(
     author_email='',
     license='CC BY-NC 4.0',
     packages=find_packages(exclude=['__dep__', 'assets']),
-    install_requires=["torch>=2.0.1", "torchvision", "timm==0.9.8", 
+    install_requires=["torch>=2.0.1", "torchvision", "timm==0.9.16", 
                       "numpy<2", "pandas", "scikit-learn", "tqdm",
                       "transformers","opencv-python","openslide-python",
                       "openslide-bin"],
