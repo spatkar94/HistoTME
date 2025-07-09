@@ -15,9 +15,16 @@ HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 diffe
 ![](figures/pancancer_figure.png)
 
 ## Installation and prerequisites
-Tested with Python 3.10.14. Set up environment using:
+Tested with Python 3.10.14. First clone the repo and cd into the directory:
 ```
-conda env create --file environment.yml
+git clone https://github.com/spatkar/HistoTME.git
+cd HistoTME
+```
+Then create a conda env and install the dependencies:
+```
+conda create -n histoTME python=3.10 -y
+conda activate histoTME
+pip install -e .
 ```
 Note: the preprocessing script makes use of NVIDIAs cuCIM image processing library. To install cuCIM, see instructions [here](https://github.com/rapidsai/cucim).
 
