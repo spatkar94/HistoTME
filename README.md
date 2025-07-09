@@ -42,7 +42,7 @@ The TCGA and CPTAC whole slide imaging and tanscriptomic data can be found onlin
 │   ├── slide_N.svs
 
 ```
-After downloading the WSI, utilize the scripts provided in the [data_preprocessing](data_preprocessing) folder to tesselate each WSI into non-overlapping tiles and extract foundation model embeddings. Alternatively, you can also use [trident](https://github.com/mahmoodlab/trident) to preprocess your WSI (if they are svs images). The embeddings for each WSI are saved as a h5py file along with the coordinates of each tile:
+After downloading the WSI, utilize the scripts provided in the [data_preprocessing](data_preprocessing) folder to tesselate each WSI into non-overlapping tiles and extract foundation model embeddings. Alternatively, you can also use [trident](https://github.com/mahmoodlab/trident) to preprocess your WSI (if they are svs images). The embeddings for each WSI are saved as a h5 file along with the coordinates of each tile:
 ```
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
