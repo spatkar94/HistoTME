@@ -17,7 +17,7 @@ from timm.layers import SwiGLUPacked
 from torch.utils.data import DataLoader
 import cv2
 
-device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def predict(epoch, mode, dataloader, model):
