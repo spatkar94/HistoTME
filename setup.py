@@ -3,9 +3,9 @@ from codecs import open
 from os import path
 
 setup(
-    name='uni',
-    version='0.1.0',
-    description='HistoTME',
+    name='histoTME',
+    version='v2',
+    description='HistoTMEv2',
     url='https://github.com/spatkar/HistoTME',
     author='SP, AC',
     author_email='',
