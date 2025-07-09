@@ -17,7 +17,7 @@ HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 diffe
 ## Installation and prerequisites
 Tested with Python 3.10.14. First clone the repo and cd into the directory:
 ```
-git clone https://github.com/spatkar/HistoTME.git
+git clone https://github.com/spatkar94/HistoTME.git
 cd HistoTME
 ```
 Then create a conda env and install the dependencies:
