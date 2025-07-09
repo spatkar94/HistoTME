@@ -17,7 +17,7 @@ HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 diffe
 ## Installation and prerequisites
 Tested with Python 3.10.14. Set up environment using:
 ```
-conda env create -f environment.yml
+conda env create --file environment.yml
 ```
 Note: the preprocessing script makes use of NVIDIAs cuCIM image processing library. To install cuCIM, see instructions [here](https://github.com/rapidsai/cucim).
 
