@@ -14,7 +14,7 @@ setup(
     install_requires=["torch>=2.0.1", "torchvision", "timm==0.9.16", 
                       "numpy<2", "pandas", "scikit-learn", "tqdm",
                       "transformers","opencv-python","openslide-python",
-                      "openslide-bin"],
+                      "openslide-bin","tensorboardX"],
 
     classifiers = [
     "Programming Language :: Python :: 3",
