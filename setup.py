@@ -6,7 +6,7 @@ setup(
     name='histoTME',
     version='v2',
     description='HistoTMEv2',
-    url='https://github.com/spatkar/HistoTME',
+    url='https://github.com/spatkar94/HistoTME',
     author='SP, AC',
     author_email='',
     license='CC BY-NC 4.0',
