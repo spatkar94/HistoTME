@@ -15,9 +15,9 @@ HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 diffe
 ![](figures/pancancer_figure.png)
 
 ## Installation and prerequisites
-Tested with Python 3.9. Install requirements using:
+Tested with Python 3.10.14. Set up environment and install requirements using:
 ```
-pip install -r requirements.txt
+
 ```
 Note: the preprocessing script makes use of NVIDIAs cuCIM image processing library. To install cuCIM, see instructions [here](https://github.com/rapidsai/cucim).
 
