@@ -19,6 +19,10 @@ Tested with Python 3.10.14. Set up environment and install requirements using:
 ```
 conda create --name histoTME --file requirements.txt
 ```
+or alternatively using:
+```
+conda env create -f environment.yml
+```
 Note: the preprocessing script makes use of NVIDIAs cuCIM image processing library. To install cuCIM, see instructions [here](https://github.com/rapidsai/cucim).
 
 ## How to use
