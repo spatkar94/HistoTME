@@ -15,11 +15,7 @@ HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 diffe
 ![](figures/pancancer_figure.png)
 
 ## Installation and prerequisites
-Tested with Python 3.10.14. Set up environment and install requirements using:
-```
-conda create --name histoTME --file requirements.txt
-```
-or alternatively using:
+Tested with Python 3.10.14. Set up environment using:
 ```
 conda env create -f environment.yml
 ```
