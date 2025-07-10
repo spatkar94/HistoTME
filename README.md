@@ -128,7 +128,7 @@ from huggingface_hub import snapshot_download
 snapshot_download(repo_id='spatkar94/HistoTMEv2', local_dir='local_dir')
 ```
 
-This will save all pretrained model checkpoints to a folder named `checkpoints` under local_dir. Specify this full path (i.e `local_dir/checkpoints`) as an argument to the `--chkpts_dir' option for running inference as shown above. 
+This will save all pretrained model checkpoints to a folder named `checkpoints` under your specified local_dir. Specify this full path (i.e `local_dir/checkpoints`) as an argument to the `--chkpts_dir' option for running inference as shown above. 
 
 
 
