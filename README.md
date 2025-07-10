@@ -122,13 +122,13 @@ AUTH_TOKEN = '' #specify your authentication token
 login(AUTH_TOKEN)
 ```
 
-After logging in, you can download the weights to a specified path using the following python script
+For more details on logging in and downloading models from huggingface, please read their [documentation](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication). After logging in, you can download the weights to a specified path using the following python script
 ```
 from huggingface_hub import snapshot_download
 snapshot_download(repo_id='spatkar94/HistoTMEv2', local_dir='local_dir')
 ```
 
-This will save all pretrained model checkpoints to a folder named `checkpoints` under local_dir. Specify this full path (i.e `local_dir/checkpoints`) as an argument to the `--chkpts_dir' option for running inference as shown above. For more details on downloading models from huggingface, please read their [documentation](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication) 
+This will save all pretrained model checkpoints to a folder named `checkpoints` under local_dir. Specify this full path (i.e `local_dir/checkpoints`) as an argument to the `--chkpts_dir' option for running inference as shown above. 
 
 
 
