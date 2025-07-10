@@ -119,7 +119,7 @@ Pretrained model checkpoints are available on [huggingface](https://huggingface.
 ```
 from huggingface_hub import login
 AUTH_TOKEN = '' #specify your authentication token
-login('your_auth_token')
+login(AUTH_TOKEN)
 ```
 
 After logging in, you can download the weights to a specified path using the following python script
