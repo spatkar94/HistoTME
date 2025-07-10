@@ -114,7 +114,23 @@ cd HistoTME_regression/
 
 
 ## Model weights
-Pretrained model checkpoints are available on [huggingface](https://huggingface.co/spatkar94/HistoTMEv2). The codes and model weights are intended to be used for research purposes only. Please see the [license](LICENSE)
+Pretrained model checkpoints are available on [huggingface](https://huggingface.co/spatkar94/HistoTMEv2). After gaining access to the model here, you will need to login to HuggingFace in the environment you wish to use the model. You can do this from python as follows:
+
+```
+from huggingface_hub import login
+AUTH_TOKEN = '' #specify your authentication token
+login('your_auth_token')
+```
+
+After logging in, you can download the weights to a specified path using the following python script
+```
+from huggingface_hub import snapshot_download
+snapshot_download(repo_id='spatkar94/HistoTMEv2', local_dir='local_dir')
+```
+
+This will save all pretrained model checkpoints to a folder named `checkpoints` under local_dir. Specify this full path (i.e `local_dir/checkpoints`) as an argument to the `--chkpts_dir' option for running inference as shown above. For more details on downloading models from huggingface, please read their [documentation](https://huggingface.co/docs/huggingface_hub/en/quick-start#authentication) 
+
+
 
 ## Questions and Issues
 If you find any bugs or have any questions about this code please contact: [Sushant Patkar](patkar.sushant@nih.gov) or [Alex Chen](alche@sas.upenn.edu)
