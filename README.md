@@ -12,7 +12,7 @@ The `HistoTME_regression` module contains code to train models for predicting th
 HistoTME-Omni is a pan-cancer extension of HistoTME, trained on 24 different cancer types. See our new preprint [here](https://www.biorxiv.org/content/10.1101/2025.06.11.658673v1)
 
 
-![](figures/pancancer_figure.png)
+![](figures/cohorts_latest.png)
 
 ## Installation and prerequisites
 First clone the repo and cd into the directory:
