@@ -8,8 +8,8 @@ HistoTME is a weakly supervised deep learning model that infers cell type– and
 
 The `HistoTME_regression` module contains code to train models for predicting the activity of 29 curated gene expression signatures from histopathology slides. The `HistoTME_downstream` module demonstrates use cases of these predictions for unsupervised TME profiling and stratification of immunotherapy response, illustrating how transcriptomic signature inference from WSIs can support scalable, annotation-free biomarker discovery. The original HistoTME paper is available [here](https://www.nature.com/articles/s41698-024-00765-w).
 
-## Introducing HistoTMEv2 :rocket:
-HistoTMEv2 is a pan-cancer extension of HistoTME, trained and tested on 25 different cancer types. See our new preprint [here](https://www.biorxiv.org/content/10.1101/2025.06.11.658673v1)
+## Introducing HistoTME-Omni :rocket:
+HistoTME-Omni is a pan-cancer extension of HistoTME, trained and tested on 25 different cancer types. See our new preprint [here](https://www.biorxiv.org/content/10.1101/2025.06.11.658673v1)
 
 
 ![](figures/pancancer_figure.png)
@@ -46,7 +46,7 @@ After downloading the WSI, utilize the scripts provided in the [data_preprocessi
 ```
 dict{'coords': (x,y), 'features': <embeddings>}
 ```
-Note: Our latest model, HistoTMEv2, tesselates each WSI into tiles of size 256x256 pixels, captured at 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods. 
+Note: Our latest model, HistoTME-Omni, tesselates each WSI into tiles of size 224x224 pixels, captured at 20x magnification, in order to facilitate head-to-head benchmarking against other spatial transcriptomic prediction methods. 
 
 #### Transcriptomics data
 To calculate ground truth activity of TME-associated signatures from bulk transcriptomics data please see the [following github repository](https://github.com/BostonGene/MFP/blob/master/TME_Classification.ipynb). The ground truth transcriptomic signatures should be saved in a csv file format. See [example_data](example_data).
