@@ -61,7 +61,7 @@ cd HistoTME_regression/
 ### Inference
 We have provided updated scripts for running inference. Our latest model can now be run in two modes: bulk and spatial. Bulk mode generates enrichment scores for the whole slide or patient. Whereas spatial mode generates tile-level enrichment scores.
 
-![](figures/inference_modes_figure.png)
+![](figures/AI_pipeline.png)
 
 After generating tile embeddings with a foundation model you can run the following script to generate bulk signature predictions for a cohort of WSIs
 ```
